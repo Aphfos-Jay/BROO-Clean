@@ -16,42 +16,21 @@ export default function AuthFooter() {
         textAlign={{ xs: 'center', sm: 'inherit' }}
       >
         <Typography variant="subtitle2" color="secondary">
-          This site is protected by{' '}
-          <Typography component={Link} variant="subtitle2" href="#mantis-privacy" target="_blank" underline="hover">
-            Privacy Policy
+          2024 Team NYC created this site using the Mantis Free-React Admin Template provided by{' '}
+          <Typography
+            component={Link}
+            variant="subtitle2"
+            href="https://mui.com/store/items/mantis-free-react-admin-dashboard-template/"
+            target="_blank"
+            underline="hover"
+          >
+            MUI
           </Typography>
         </Typography>
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 3 }} textAlign={{ xs: 'center', sm: 'inherit' }}>
-          <Typography
-            variant="subtitle2"
-            color="secondary"
-            component={Link}
-            href="https://codedthemes.com"
-            target="_blank"
-            underline="hover"
-          >
-            Terms and Conditions
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            color="secondary"
-            component={Link}
-            href="https://codedthemes.com"
-            target="_blank"
-            underline="hover"
-          >
-            Privacy Policy
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            color="secondary"
-            component={Link}
-            href="https://codedthemes.com"
-            target="_blank"
-            underline="hover"
-          >
-            CA Privacy Notice
+          <Typography variant="subtitle2" component={Link} href="/privacy" target="_blank" underline="hover">
+            개인정보 보호정책
           </Typography>
         </Stack>
       </Stack>

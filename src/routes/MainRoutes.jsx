@@ -10,7 +10,9 @@ const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/DashboardDefault')));
 
 // render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
+const Tracking = Loadable(lazy(() => import('pages/keyComponents/Tracking')));
+const Monitoring = Loadable(lazy(() => import('pages/keyComponents/Monitoring')));
+const Accident = Loadable(lazy(() => import('pages/keyComponents/Accident')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -36,8 +38,16 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'sample-page',
-      element: <SamplePage />
+      path: 'monitoring',
+      element: <Monitoring />
+    },
+    {
+      path: 'tracking',
+      element: <Tracking />
+    },
+    {
+      path: 'accident',
+      element: <Accident />
     },
     {
       path: 'shadow',

@@ -25,10 +25,10 @@ import OrdersTable from './OrdersTable';
 import GiftOutlined from '@ant-design/icons/GiftOutlined';
 import MessageOutlined from '@ant-design/icons/MessageOutlined';
 import SettingOutlined from '@ant-design/icons/SettingOutlined';
-import avatar1 from 'assets/images/users/avatar-1.png';
-import avatar2 from 'assets/images/users/avatar-2.png';
-import avatar3 from 'assets/images/users/avatar-3.png';
-import avatar4 from 'assets/images/users/avatar-4.png';
+import Jay from 'assets/images/users/Jay.jpg';
+import Gi from 'assets/images/users/Gi.jpg';
+import Gyu from 'assets/images/users/Gyu.jpg';
+import Yong from 'assets/images/users/Yong.jpg';
 
 // avatar style
 const avatarSX = {
@@ -228,10 +228,10 @@ export default function DashboardDefault() {
               </Grid>
               <Grid item>
                 <AvatarGroup sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
-                  <Avatar alt="Remy Sharp" src={avatar1} />
-                  <Avatar alt="Travis Howard" src={avatar2} />
-                  <Avatar alt="Cindy Baker" src={avatar3} />
-                  <Avatar alt="Agnes Walker" src={avatar4} />
+                  <Avatar alt="Remy Sharp" src={Jay} />
+                  <Avatar alt="Travis Howard" src={Gi} />
+                  <Avatar alt="Cindy Baker" src={Gyu} />
+                  <Avatar alt="Agnes Walker" src={Yong} />
                 </AvatarGroup>
               </Grid>
             </Grid>

@@ -8,7 +8,7 @@ export default function DrawerContent() {
     <>
       <SimpleBar sx={{ '& .simplebar-content': { display: 'flex', flexDirection: 'column' } }}>
         <Navigation />
-        <img src="/public/Brooclean.PNG" />
+        <img src="/Brooclean.PNG" />
       </SimpleBar>
     </>
   );

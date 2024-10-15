@@ -24,7 +24,7 @@ const Logo = () => {
      */
 
     <div className="divLogo">
-      <img src={'/public/Brooclean_logo_word.PNG'} width="210" />
+      <img src={'/Brooclean_logo_word.PNG'} width="210" />
     </div>
   );
 };

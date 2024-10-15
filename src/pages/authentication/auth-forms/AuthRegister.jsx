@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import './AuthRegister.css';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -32,8 +33,13 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 export default function AuthRegister() {
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordCheck, setShowPasswordCheck] = useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleClickShowPasswordCheck = () => {
+    setShowPasswordCheck(!showPasswordCheck);
   };
 
   const handleMouseDownPassword = (event) => {
@@ -57,14 +63,16 @@ export default function AuthRegister() {
           lastname: '',
           email: '',
           company: '',
+          department: '',
           password: '',
+          passwordCheck: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          firstname: Yup.string().max(255).required('First Name is required'),
-          lastname: Yup.string().max(255).required('Last Name is required'),
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          firstname: Yup.string().max(255).required('이름을 입력해주세요.'),
+          lastname: Yup.string().max(255).required('성을 입력해주세요.'),
+          email: Yup.string().email('유효한 이메일주소가 아닙니다.').max(255).required('이메일을 입력해주세요.'),
+          password: Yup.string().max(255).required('패스워드를 입력해주세요.')
         })}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -72,7 +80,9 @@ export default function AuthRegister() {
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="firstname-signup">First Name*</InputLabel>
+                  <InputLabel htmlFor="firstname-signup">
+                    <span className="emphasis">*</span>이름
+                  </InputLabel>
                   <OutlinedInput
                     id="firstname-login"
                     type="firstname"
@@ -80,7 +90,7 @@ export default function AuthRegister() {
                     name="firstname"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="John"
+                    placeholder="은우"
                     fullWidth
                     error={Boolean(touched.firstname && errors.firstname)}
                   />
@@ -91,9 +101,12 @@ export default function AuthRegister() {
                   </FormHelperText>
                 )}
               </Grid>
+
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="lastname-signup">Last Name*</InputLabel>
+                  <InputLabel htmlFor="lastname-signup">
+                    <span className="emphasis">*</span>성
+                  </InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.lastname && errors.lastname)}
@@ -103,7 +116,7 @@ export default function AuthRegister() {
                     name="lastname"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Doe"
+                    placeholder="차"
                     inputProps={{}}
                   />
                 </Stack>
@@ -113,9 +126,10 @@ export default function AuthRegister() {
                   </FormHelperText>
                 )}
               </Grid>
-              <Grid item xs={12}>
+
+              <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="company-signup">Company</InputLabel>
+                  <InputLabel htmlFor="company-signup">회사</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.company && errors.company)}
@@ -124,7 +138,7 @@ export default function AuthRegister() {
                     name="company"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Demo Inc."
+                    placeholder="해양과학기술원"
                     inputProps={{}}
                   />
                 </Stack>
@@ -134,9 +148,34 @@ export default function AuthRegister() {
                   </FormHelperText>
                 )}
               </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="company-signup">부서</InputLabel>
+                  <OutlinedInput
+                    fullWidth
+                    error={Boolean(touched.department && errors.department)}
+                    id="company-signup"
+                    value={values.department}
+                    name="company"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="해양자원·환경연구본부 해양환경연구부"
+                    inputProps={{}}
+                  />
+                </Stack>
+                {touched.department && errors.department && (
+                  <FormHelperText error id="helper-text-company-signup">
+                    {errors.department}
+                  </FormHelperText>
+                )}
+              </Grid>
+
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-signup">Email Address*</InputLabel>
+                  <InputLabel htmlFor="email-signup">
+                    <span className="emphasis">*</span>이메일 주소
+                  </InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
@@ -156,9 +195,25 @@ export default function AuthRegister() {
                   </FormHelperText>
                 )}
               </Grid>
+
+              {/* 비밀번호 */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-signup">Password</InputLabel>
+                  <InputLabel htmlFor="password-signup">
+                    <span className="emphasis">*</span>비밀번호
+                  </InputLabel>
+                  <FormControl fullWidth sx={{ mt: 2 }}>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item>
+                        <Box sx={{ bgcolor: level?.color, width: 85, height: 8, borderRadius: '7px' }} />
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="subtitle1" fontSize="0.75rem">
+                          {level?.label}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </FormControl>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
@@ -193,29 +248,60 @@ export default function AuthRegister() {
                     {errors.password}
                   </FormHelperText>
                 )}
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item>
-                      <Box sx={{ bgcolor: level?.color, width: 85, height: 8, borderRadius: '7px' }} />
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="subtitle1" fontSize="0.75rem">
-                        {level?.label}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </FormControl>
               </Grid>
+
+              <Grid item xs={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="password-check">
+                    <span className="emphasis">*</span>비밀번호 확인
+                  </InputLabel>
+
+                  <OutlinedInput
+                    fullWidth
+                    error={Boolean(touched.passwordCheck && errors.passwordCheck)}
+                    id="password-check"
+                    type={showPasswordCheck ? 'text' : 'password'}
+                    value={values.passwordCheck}
+                    name="passwordCheck"
+                    onBlur={handleBlur}
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPasswordCheck}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                          color="secondary"
+                        >
+                          {showPasswordCheck ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    placeholder="******"
+                    inputProps={{}}
+                  />
+                </Stack>
+                {touched.passwordCheck && errors.passwordCheck && (
+                  <FormHelperText error id="helper-text-password-signup">
+                    {errors.passwordCheck}
+                  </FormHelperText>
+                )}
+              </Grid>
+
               <Grid item xs={12}>
                 <Typography variant="body2">
-                  By Signing up, you agree to our &nbsp;
+                  이 사이트에 가입하면{' '}
                   <Link variant="subtitle2" component={RouterLink} to="#">
-                    Terms of Service
+                    서비스 약관
                   </Link>
-                  &nbsp; and &nbsp;
+                  &nbsp; 및 &nbsp;
                   <Link variant="subtitle2" component={RouterLink} to="#">
-                    Privacy Policy
+                    개인정보 보호정책
                   </Link>
+                  에 동의한것으로 간주합니다.
                 </Typography>
               </Grid>
               {errors.submit && (
@@ -226,7 +312,7 @@ export default function AuthRegister() {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Create Account
+                    계정생성
                   </Button>
                 </AnimateButton>
               </Grid>

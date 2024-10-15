@@ -15,7 +15,7 @@ export default function AuthBackground() {
         transform: 'inherit'
       }}
     >
-      <img src={'/public/Brooclean.PNG'} width="700" />
+      <img src={'/Brooclean.PNG'} width="700" />
     </Box>
   );
 }

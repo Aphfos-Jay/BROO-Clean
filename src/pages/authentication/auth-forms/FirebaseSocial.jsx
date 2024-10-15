@@ -4,8 +4,8 @@ import Stack from '@mui/material/Stack';
 
 // assets
 import Google from 'assets/images/icons/google.svg';
-import Twitter from 'assets/images/icons/twitter.svg';
-import Facebook from 'assets/images/icons/facebook.svg';
+import Github from 'assets/images/icons/github.svg';
+import Linkedin from 'assets/images/icons/LinkedIn.svg';
 
 // ==============================|| FIREBASE - SOCIAL BUTTON ||============================== //
 
@@ -17,11 +17,11 @@ export default function FirebaseSocial() {
     // login || singup
   };
 
-  const twitterHandler = async () => {
+  const githubHandler = async () => {
     // login || singup
   };
 
-  const facebookHandler = async () => {
+  const linkedinHandler = async () => {
     // login || singup
   };
 
@@ -32,32 +32,14 @@ export default function FirebaseSocial() {
       justifyContent={{ xs: 'space-around', sm: 'space-between' }}
       sx={{ '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 }, ml: { xs: 0, sm: -0.5 } } }}
     >
-      <Button
-        variant="outlined"
-        color="secondary"
-        fullWidth={!downSM}
-        startIcon={<img src={Google} alt="Google" />}
-        onClick={googleHandler}
-      >
+      <Button variant="outlined" color="secondary" fullWidth={!downSM} startIcon={<img src={Google} />} onClick={googleHandler}>
         {!downSM && 'Google'}
       </Button>
-      <Button
-        variant="outlined"
-        color="secondary"
-        fullWidth={!downSM}
-        startIcon={<img src={Twitter} alt="Twitter" />}
-        onClick={twitterHandler}
-      >
-        {!downSM && 'Twitter'}
+      <Button variant="outlined" color="secondary" fullWidth={!downSM} startIcon={<img src={Github} />} onClick={githubHandler}>
+        {!downSM && 'Github'}
       </Button>
-      <Button
-        variant="outlined"
-        color="secondary"
-        fullWidth={!downSM}
-        startIcon={<img src={Facebook} alt="Facebook" />}
-        onClick={facebookHandler}
-      >
-        {!downSM && 'Facebook'}
+      <Button variant="outlined" color="secondary" fullWidth={!downSM} startIcon={<img src={Linkedin} />} onClick={linkedinHandler}>
+        {!downSM && 'LinkedIn'}
       </Button>
     </Stack>
   );
