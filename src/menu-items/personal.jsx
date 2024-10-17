@@ -16,24 +16,24 @@ const personal = {
   type: 'group',
   children: [
     {
-      id: 'Tsk',
+      id: 'Task',
       title: '작업',
       type: 'item',
-      url: '/shadow',
+      url: '/todo',
       icon: icons.CheckSquareOutlined
     },
     {
       id: 'calendar',
       title: '일정관리',
       type: 'item',
-      url: '/typography',
+      url: '/event',
       icon: icons.CalendarOutlined
     },
     {
       id: 'SR',
       title: 'SR 확인',
       type: 'item',
-      url: '/color',
+      url: '/sr',
       icon: icons.EyeOutlined
     }
   ]

@@ -13,6 +13,9 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/DashboardDe
 const Tracking = Loadable(lazy(() => import('pages/keyComponents/Tracking')));
 const Monitoring = Loadable(lazy(() => import('pages/keyComponents/Monitoring')));
 const Accident = Loadable(lazy(() => import('pages/keyComponents/Accident')));
+const TodoList = Loadable(lazy(() => import('pages/keyComponents/TodoList')));
+const Event = Loadable(lazy(() => import('pages/keyComponents/Event')));
+const Sr = Loadable(lazy(() => import('pages/keyComponents/Sr')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -48,6 +51,18 @@ const MainRoutes = {
     {
       path: 'accident',
       element: <Accident />
+    },
+    {
+      path: 'todo',
+      element: <TodoList />
+    },
+    {
+      path: 'event',
+      element: <Event />
+    },
+    {
+      path: 'sr',
+      element: <Sr />
     },
     {
       path: 'shadow',
