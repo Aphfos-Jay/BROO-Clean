@@ -12,7 +12,7 @@
 
 .List > input:focus {
   outline: none;
-  border-bottom: 1px solid rgb(37, 147, 255);
+  border-bottom: 1px solid rgb(8, 157, 233);
 }
 
 .List .todo_Wrapper {

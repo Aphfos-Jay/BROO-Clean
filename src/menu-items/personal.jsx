@@ -16,7 +16,7 @@ const personal = {
   type: 'group',
   children: [
     {
-      id: 'Task',
+      id: 'task',
       title: '작업',
       type: 'item',
       url: '/todo',
@@ -30,7 +30,7 @@ const personal = {
       icon: icons.CalendarOutlined
     },
     {
-      id: 'SR',
+      id: 'servicerequest',
       title: 'SR 확인',
       type: 'item',
       url: '/sr',

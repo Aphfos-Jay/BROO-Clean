@@ -1,8 +1,8 @@
-import "./Editor.css";
-import { useState, useRef } from "react";
+import './Editor.css';
+import { useState, useRef } from 'react';
 
 const Editor = ({ onCreate }) => {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const contentRef = useRef();
 
   const onChangeContent = (e) => {
@@ -10,15 +10,14 @@ const Editor = ({ onCreate }) => {
   };
 
   const onSubmit = () => {
-    //빈값 입력시 생성하지 않고 화면에 포커싱 해주는 기능
-    if (content === "") {
+    if (content === '') {
       contentRef.current.focus();
       return;
     }
     onCreate(content);
-    setContent("");
+    setContent('');
   };
-  //엔터키 입력
+
   const onKeyDown = (e) => {
     if (e.keyCode === 13) {
       onSubmit();
@@ -27,13 +26,7 @@ const Editor = ({ onCreate }) => {
 
   return (
     <div className="Editor">
-      <input
-        ref={contentRef}
-        value={content}
-        onChange={onChangeContent}
-        onKeyDown={onKeyDown}
-        placeholder="새로운 To do..."
-      />
+      <input ref={contentRef} value={content} onChange={onChangeContent} onKeyDown={onKeyDown} placeholder="새로운 작업을 입력하세요." />
       <button onClick={onSubmit}>추가</button>
     </div>
   );

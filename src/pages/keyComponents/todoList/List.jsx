@@ -19,11 +19,6 @@ const List = ({ todos, onUpdate, onDelete }) => {
 
   const filteredData = getFilteredDate();
 
-  /**
-   * Section10
-   * useMemo - 콜백함수의 리턴값을 그대로 반환한다.
-   * todos가 변경될때 마다 해당 함수를 실행
-   */
   const { totalCount, doneCount, notDoneCount } = useMemo(() => {
     console.log('getAnalyedData 호출!');
     const totalCount = todos.length;
