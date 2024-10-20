@@ -1,0 +1,47 @@
+.popup {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.customToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.customToolbar button {
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #1890ff;
+}
+
+.customToolbar button:hover {
+  background-color: #096dd9; /* 호버 시 색상 */
+}
+
+.toolbarSpan {
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+.prevMonth {
+  margin-right: 10px;
+}
+
+.nextMonth {
+  margin-left: 10px;
+}
+
+.popupSection {
+  display: flex;
+  margin-left: 82%;
+}
