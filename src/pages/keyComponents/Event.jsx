@@ -7,7 +7,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './eventManage/Event.css';
 import CustomToolbar from './eventManage/CustomToolbar';
 
-moment.locale('ko-KR');
+moment.locale('ko');
 const localizer = momentLocalizer(moment);
 Modal.setAppElement('#root');
 
@@ -69,8 +69,15 @@ export default function Event() {
   // Event 창이 열릴 때 딱 1번 실행 후 셋팅
   useEffect(() => {
     const storedEvents = JSON.parse(localStorage.getItem('events'));
+    console.log('storedEvents ==> ' + JSON.stringify(storedEvents));
+
     if (storedEvents) {
-      setEvents(storedEvents);
+      const convertedEvents = storedEvents.map((event) => ({
+        ...event,
+        start: new Date(event.start),
+        end: new Date(event.end)
+      }));
+      setEvents(convertedEvents);
     }
   }, []);
 
@@ -110,7 +117,17 @@ export default function Event() {
   const handleDeleteEvent = () => {
     const deletingEvents = events.filter((event) => event !== selectedEvent);
     setEvents(deletingEvents);
+    setNewEvent(eventData);
     setModalIsOpen(false);
+  };
+
+  const handleOnChange = (event) => {
+    const name = event.target.name;
+    if (name !== 'start' && name !== 'end') {
+      setNewEvent({ ...newEvent, [name]: event.target.value });
+    } else {
+      setNewEvent({ ...newEvent, [name]: new Date(event.target.value) });
+    }
   };
 
   return (
@@ -138,21 +155,12 @@ export default function Event() {
         <form>
           <label>
             주제
-            <input
-              className="popupSubject"
-              type="text"
-              value={newEvent.title}
-              onChange={(event) => setNewEvent({ ...newEvent, title: event.target.value })}
-            />
+            <input className="popupSubject" type="text" name="title" value={newEvent.title} onChange={handleOnChange} />
           </label>
 
           <label>
             설명
-            <textarea
-              className="popupDescription"
-              value={newEvent.description}
-              onChange={(event) => setNewEvent({ ...newEvent, description: event.target.value })}
-            />
+            <textarea className="popupDescription" name="description" value={newEvent.description} onChange={handleOnChange} />
           </label>
 
           <label>
@@ -160,8 +168,9 @@ export default function Event() {
             <input
               className="popupDateInput"
               type="datetime-local"
+              name="start"
               value={moment(newEvent.start).format('YYYY-MM-DDTHH:mm')}
-              onChange={(event) => setNewEvent({ ...newEvent, start: new Date(event.target.value) })}
+              onChange={handleOnChange}
             />
           </label>
 
@@ -170,8 +179,9 @@ export default function Event() {
             <input
               className="popupDateInput"
               type="datetime-local"
+              name="end"
               value={moment(newEvent.end).format('YYYY-MM-DDTHH:mm')}
-              onChange={(event) => setNewEvent({ ...newEvent, end: new Date(event.target.value) })}
+              onChange={handleOnChange}
             />
           </label>
 

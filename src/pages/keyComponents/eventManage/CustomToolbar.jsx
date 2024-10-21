@@ -1,6 +1,8 @@
 // CustomToolbar.js
 import React, { useState } from 'react';
 import './CustomToolbar.css';
+import ArrowLeftOutlined from '@ant-design/icons/ArrowLeftOutlined';
+import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined';
 const CustomToolbar = (props) => {
   const { label, onNavigate, onView, views } = props;
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -20,21 +22,22 @@ const CustomToolbar = (props) => {
     <>
       <div className="customToolbar">
         <button className="prevMonth" onClick={() => onNavigate('PREV')}>
-          이전 월
+          <ArrowLeftOutlined />
         </button>
         <span className="toolbarSpan" onClick={handlePopupToggle}>
           {label}
         </span>
         {isPopupOpen && (
           <div className="popup">
+            선택 월: &nbsp; {label} <br />
             <input type="month" onChange={(e) => handleDateSelect(new Date(e.target.value))} style={{ margin: '10px' }} />
             <button style={{ backgroundColor: '#ff7875' }} onClick={handlePopupToggle}>
               닫기
             </button>
           </div>
         )}
-        <button class="nextMonth" onClick={() => onNavigate('NEXT')}>
-          다음 월
+        <button className="nextMonth" onClick={() => onNavigate('NEXT')}>
+          <ArrowRightOutlined />
         </button>
       </div>
       <div className="customToolbar popupSection">
