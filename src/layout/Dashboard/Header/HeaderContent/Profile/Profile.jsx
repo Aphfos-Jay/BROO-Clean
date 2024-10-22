@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -49,6 +50,7 @@ function a11yProps(index) {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const anchorRef = useRef(null);
@@ -133,8 +135,14 @@ export default function Profile() {
                       </Grid>
                       <Grid item>
                         <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }}>
-                            <LogoutOutlined />
+                          <IconButton
+                            size="large"
+                            sx={{ color: 'text.primary' }}
+                            onClick={() => {
+                              navigate('/login');
+                            }}
+                          >
+                            <LogoutOutlined onclic />
                           </IconButton>
                         </Tooltip>
                       </Grid>

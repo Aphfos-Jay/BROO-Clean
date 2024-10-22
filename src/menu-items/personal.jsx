@@ -31,7 +31,7 @@ const personal = {
     },
     {
       id: 'servicerequest',
-      title: 'SR 확인',
+      title: '(SR) 서비스',
       type: 'item',
       url: '/sr',
       icon: icons.EyeOutlined

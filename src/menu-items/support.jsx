@@ -1,11 +1,12 @@
 // assets
-import { MonitorOutlined, CompassOutlined, HourglassOutlined } from '@ant-design/icons';
+import { MonitorOutlined, CompassOutlined, HourglassOutlined, DashboardOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
   MonitorOutlined,
   CompassOutlined,
-  HourglassOutlined
+  HourglassOutlined,
+  DashboardOutlined
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE & DOCUMENTATION ||============================== //
@@ -35,6 +36,14 @@ const support = {
       type: 'item',
       url: '/accident',
       icon: icons.HourglassOutlined
+    },
+    {
+      id: 'dashboard',
+      title: '대시보드',
+      type: 'item',
+      url: '/dashboard',
+      icon: icons.DashboardOutlined,
+      breadcrumbs: false
     }
   ]
 };

@@ -1,12 +1,12 @@
 import { lazy } from 'react';
 
 import Loadable from 'components/Loadable';
-import Dashboard from 'layout/Dashboard/DashboardLayout';
+import DashboardLayout from 'layout/Dashboard/DashboardLayout';
 
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
 const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
-const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/DashboardDefault')));
+const Dashboard = Loadable(lazy(() => import('pages/dashboard/Dashboard')));
 
 const Tracking = Loadable(lazy(() => import('pages/keyComponents/Tracking')));
 const Monitoring = Loadable(lazy(() => import('pages/keyComponents/Monitoring')));
@@ -14,16 +14,17 @@ const Accident = Loadable(lazy(() => import('pages/keyComponents/Accident')));
 const TodoList = Loadable(lazy(() => import('pages/keyComponents/TodoList')));
 const Event = Loadable(lazy(() => import('pages/keyComponents/Event')));
 const ServiceRequest = Loadable(lazy(() => import('pages/keyComponents/ServiceRequest')));
+const Home = Loadable(lazy(() => import('pages/keyComponents/Home')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
   path: '/',
-  element: <Dashboard />,
+  element: <DashboardLayout />,
   children: [
     {
-      path: '/',
-      element: <DashboardDefault />
+      path: 'home',
+      element: <Home />
     },
     {
       path: 'color',
@@ -31,12 +32,7 @@ const MainRoutes = {
     },
     {
       path: 'dashboard',
-      children: [
-        {
-          path: 'default',
-          element: <DashboardDefault />
-        }
-      ]
+      element: <Dashboard />
     },
     {
       path: 'monitoring',
