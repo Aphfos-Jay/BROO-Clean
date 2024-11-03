@@ -23,9 +23,14 @@ const MainRoutes = {
   element: <DashboardLayout />,
   children: [
     {
+      path: '/',
+      element: <Home />
+    },
+    {
       path: 'home',
       element: <Home />
     },
+
     {
       path: 'color',
       element: <Color />
