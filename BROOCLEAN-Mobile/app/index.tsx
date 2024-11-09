@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from 'react-native';
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>여기가 바뀌는 곳이구나~</Text>
+      <Text style={styles.text}>신기하지~</Text>
     </View>
   );
 }
@@ -14,9 +14,9 @@ const styles = StyleSheet.create({
 
     backgroundColor: '#25292e',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   text: {
-    color: '#fff',
-  },
+    color: '#fff'
+  }
 });
