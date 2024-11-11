@@ -129,6 +129,7 @@ export default function ServiceRequest() {
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>주제</TableCell>
+              <TableCell>위치</TableCell>
               <TableCell>진행 상태</TableCell>
               <TableCell align="right">전화번호</TableCell>
               <TableCell align="right">이메일</TableCell>
@@ -141,6 +142,7 @@ export default function ServiceRequest() {
                 <TableRow key={row.caseNumber} hover onClick={() => handleRowClick(row.caseNumber)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{row.caseNumber}</TableCell>
                   <TableCell>{row.subject}</TableCell>
+                  <TableCell>{JSON.stringify(row.location)}</TableCell>
                   <TableCell>
                     <OrderStatus status={row.status} />
                   </TableCell>

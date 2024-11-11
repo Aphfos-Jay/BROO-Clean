@@ -7,49 +7,77 @@ app.use(cors());
 app.use(express.json());
 
 // MySQL 연결 설정
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: 'localhost',
   user: 'root', // 본인의 MySQL 사용자 이름
   password: 'brcladmin1!', // 본인의 MySQL 비밀번호
-  database: 'brcl_report'
+  database: 'brcl_report',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 // 데이터베이스 연결 테스트
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
     console.error('DB 연결 실패:', err);
     return;
   }
   console.log('MySQL DB 연결 성공');
+  connection.release();
 });
 
 // 신고 데이터 가져오기 API
-app.get('/api/reports', (req, res) => {
-  const query = 'SELECT caseNumber, subject, status, mobile, email, createdDate FROM reports';
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('서버 에러');
-    } else {
-      res.json(results);
-    }
-  });
+app.get('/api/reports', async (req, res) => {
+  try {
+    const [results] = await db
+      .promise()
+      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports');
+    res.json(results);
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).send('서버 에러');
+  }
 });
 
-app.get('/api/report/:caseNo', (req, res) => {
+// 신고 데이터 디테일 한건만 가져오기
+app.get('/api/report/:caseNo', async (req, res) => {
   const { caseNo } = req.params;
-  const query = 'SELECT caseNumber, subject, status, mobile, email, createdDate, description, location FROM reports WHERE caseNumber = ?';
+  try {
+    const [result] = await db
+      .promise()
+      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, description, location FROM reports WHERE caseNumber = ?', [
+        caseNo
+      ]);
 
-  db.query(query, [caseNo], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('서버 오류');
-    } else if (result.length > 0) {
+    if (result.length > 0) {
       res.json(result[0]);
     } else {
       res.status(404).send('데이터를 찾을 수 없습니다.');
     }
-  });
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).send('서버 에러');
+  }
+});
+
+// 신고 데이터 업데이트 API
+app.put('/api/update/:caseNo', async (req, res) => {
+  const { caseNo } = req.params;
+  const { status, comment } = req.body;
+
+  try {
+    const [result] = await db.promise().query('UPDATE reports SET status = ?, comment = ? WHERE caseNumber = ?', [status, comment, caseNo]);
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: '상태가 성공적으로 업데이트되었습니다.' });
+    } else {
+      res.status(404).json({ error: '해당 신고를 찾을 수 없습니다.' });
+    }
+  } catch (error) {
+    console.error('상태 업데이트 중 오류:', error);
+    res.status(500).json({ error: '상태 업데이트에 실패했습니다.' });
+  }
 });
 
 // 서버 시작
