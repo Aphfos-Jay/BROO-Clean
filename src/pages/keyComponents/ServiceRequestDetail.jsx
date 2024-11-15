@@ -104,6 +104,12 @@ const ServiceRequestDetail = () => {
                     <strong>설명:</strong> {description}
                   </Typography>
                 </Box>
+                <Box>
+                  <strong>첨부 이미지</strong>
+                  <Typography variant="body1">
+                    <img src="/NYC.PNG" width="800px" />
+                  </Typography>
+                </Box>
               </Stack>
             </CardContent>
           </Card>
@@ -148,7 +154,7 @@ const ServiceRequestDetail = () => {
             label="담당자 코멘트"
             multiline
             rows={4}
-            value={comment}
+            value={caseData.comment}
             onChange={handleCommentChange}
             variant="outlined"
             fullWidth

@@ -46,9 +46,10 @@ app.get('/api/report/:caseNo', async (req, res) => {
   try {
     const [result] = await db
       .promise()
-      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, description, location FROM reports WHERE caseNumber = ?', [
-        caseNo
-      ]);
+      .query(
+        'SELECT caseNumber, subject, status, mobile, email, createdDate, description, location, comment FROM reports WHERE caseNumber = ?',
+        [caseNo]
+      );
 
     if (result.length > 0) {
       res.json(result[0]);
