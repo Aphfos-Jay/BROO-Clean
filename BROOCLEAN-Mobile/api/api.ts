@@ -24,16 +24,15 @@ export const getReportDetail = async (caseNo: string) => {
   }
 };
 
-// 신고 상태 업데이트 (사례 종료)
-export const updateReportStatus = async (caseNo: string, status: string, comment: string) => {
+// 신고 데이터 전송
+export const createReport = async (formData) => {
   try {
-    const response = await axios.put(`${BASE_URL}/update/${caseNo}`, {
-      status,
-      comment
+    const response = await axios.post(`${BASE_URL}/api/mobileCreate`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
   } catch (error) {
-    console.error('상태 업데이트 중 오류:', error);
+    console.error('신고 생성 오류:', error);
     throw error;
   }
 };

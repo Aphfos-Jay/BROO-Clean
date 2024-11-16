@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, ActivityIndicator } from 'react-native';
-import { getReportDetail, updateReportStatus } from '../../api/api';
-import { useRouter, useSearchParams } from 'expo-router';
+import { getReportDetail, updateReportStatus } from '../api/api';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 export default function ReportDetailScreen() {
-  const { caseNo } = useSearchParams();
+  const { caseNo } = useLocalSearchParams();
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchReportDetail = async () => {
+      if (!caseNo) return;
       try {
         const data = await getReportDetail(caseNo as string);
         setReport(data);
@@ -23,16 +24,6 @@ export default function ReportDetailScreen() {
     fetchReportDetail();
   }, [caseNo]);
 
-  const handleCloseCase = async () => {
-    try {
-      await updateReportStatus(caseNo as string, 'closed', '사례 종료됨');
-      alert('사례가 종료되었습니다.');
-      router.back();
-    } catch (error) {
-      console.error('사례 종료 실패:', error);
-    }
-  };
-
   if (loading) return <ActivityIndicator size="large" color="#ffd33d" />;
 
   return (
@@ -42,9 +33,9 @@ export default function ReportDetailScreen() {
           <Text style={styles.text}>제목: {report.subject}</Text>
           <Text style={styles.text}>설명: {report.description}</Text>
           <Text style={styles.text}>상태: {report.status}</Text>
-          <Text style={styles.text}>위치: {report.location}</Text>
+          {/* location이 객체일 경우 JSON.stringify를 사용하여 문자열로 변환 */}
+          <Text style={styles.text}>위치: {typeof report.location === 'object' ? JSON.stringify(report.location) : report.location}</Text>
           <Text style={styles.text}>생성일: {report.createdDate}</Text>
-          {report.status !== 'closed' && <Button title="사례 종료" onPress={handleCloseCase} />}
         </>
       ) : (
         <Text>데이터를 찾을 수 없습니다.</Text>

@@ -81,6 +81,22 @@ app.put('/api/update/:caseNo', async (req, res) => {
   }
 });
 
+// 모바일에서 작성한 신고 데이터 저장 API
+app.post('/api/mobileCreate', async (req, res) => {
+  const { subject, description, latitude, longitude } = req.body;
+  const image = req.files?.image;
+
+  try {
+    const query = 'INSERT INTO reports (subject, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?)';
+    const values = [subject, description, latitude, longitude, image ? image.path : null];
+    await db.promise().query(query, values);
+    res.status(201).json({ message: '신고 접수 성공' });
+  } catch (error) {
+    console.error('신고 저장 오류:', error);
+    res.status(500).json({ error: '신고 저장 실패' });
+  }
+});
+
 // 서버 시작
 const PORT = 5000;
 app.listen(PORT, () => {
