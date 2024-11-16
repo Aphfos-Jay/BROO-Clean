@@ -6,7 +6,6 @@ import personal from './personal';
 import home from './homeMain';
 
 // ==============================|| MENU ITEMS ||============================== //
-
 const menuItems = {
   items: [home, support, personal, utilities]
 };

@@ -65,7 +65,7 @@ const headCells = [
     id: 'tracking_no',
     align: 'left',
     disablePadding: false,
-    label: 'Tracking No.'
+    label: 'No.'
   },
   {
     id: 'name',

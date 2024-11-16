@@ -13,7 +13,8 @@ const Monitoring = Loadable(lazy(() => import('pages/keyComponents/Monitoring'))
 const Accident = Loadable(lazy(() => import('pages/keyComponents/Accident')));
 const TodoList = Loadable(lazy(() => import('pages/keyComponents/TodoList')));
 const Event = Loadable(lazy(() => import('pages/keyComponents/Event')));
-const ServiceRequest = Loadable(lazy(() => import('pages/keyComponents/ServiceRequest')));
+const ServiceRequestList = Loadable(lazy(() => import('pages/keyComponents/ServiceRequestList')));
+const ServiceRequestDetail = Loadable(lazy(() => import('pages/keyComponents/ServiceRequestDetail')));
 const Home = Loadable(lazy(() => import('pages/keyComponents/Home')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -23,9 +24,14 @@ const MainRoutes = {
   element: <DashboardLayout />,
   children: [
     {
+      path: '/',
+      element: <Home />
+    },
+    {
       path: 'home',
       element: <Home />
     },
+
     {
       path: 'color',
       element: <Color />
@@ -56,7 +62,11 @@ const MainRoutes = {
     },
     {
       path: 'sr',
-      element: <ServiceRequest />
+      element: <ServiceRequestList />
+    },
+    {
+      path: 'srDetails/:caseNo',
+      element: <ServiceRequestDetail />
     },
     {
       path: 'shadow',

@@ -2,7 +2,7 @@ import useSWR, { mutate } from 'swr';
 import { useMemo } from 'react';
 
 const initialState = {
-  openedItem: 'dashboard',
+  openedItem: 'home',
   openedComponent: 'buttons',
   openedHorizontalItem: null,
   isDashboardDrawerOpened: false,
@@ -12,7 +12,7 @@ const initialState = {
 export const endpoints = {
   key: 'api/menu',
   master: 'master',
-  dashboard: '/dashboard' // server URL
+  home: 'home' // server URL
 };
 
 export function useGetMenuMaster() {
@@ -47,7 +47,6 @@ export function handlerDrawerOpen(isDashboardDrawerOpened) {
 
 export function handlerActiveItem(openedItem) {
   // to update local state based on key
-
   mutate(
     endpoints.key + endpoints.master,
     (currentMenuMaster) => {
