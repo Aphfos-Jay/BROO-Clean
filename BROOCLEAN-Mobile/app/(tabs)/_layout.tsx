@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function TabLayout() {
@@ -7,14 +6,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#ffd33d',
-        headerStyle: {
-          backgroundColor: '#25292e'
-        },
+        headerStyle: { backgroundColor: '#25292e' },
         headerShadowVisible: false,
         headerTintColor: '#fff',
-        tabBarStyle: {
-          backgroundColor: '#25292e'
-        }
+        tabBarStyle: { backgroundColor: '#25292e' }
       }}
     >
       <Tabs.Screen
@@ -25,12 +20,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="about"
+        name="report-list"
         options={{
-          title: 'About',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color={color} size={24} />
-          )
+          title: 'Reports',
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'list-circle' : 'list-circle-outline'} color={color} size={24} />
         }}
       />
     </Tabs>
