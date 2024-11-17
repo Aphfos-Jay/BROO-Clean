@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, ActivityIndicator } from 'react-native';
-import { getReportDetail, updateReportStatus } from '../api/api';
+import { getReportDetail } from '../api/api';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
 export default function ReportDetailScreen() {

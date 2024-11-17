@@ -23,6 +23,9 @@ const ServiceRequestDetail = () => {
   const [status, setStatus] = useState(0);
   const [comment, setComment] = useState('');
 
+  // const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
+  const BASE_URL = 'http://192.168.75.187:5000/api';
+
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/report/${caseNo}`)

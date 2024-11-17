@@ -87,8 +87,9 @@ app.post('/api/mobileCreate', async (req, res) => {
   const image = req.files?.image;
 
   try {
-    const query = 'INSERT INTO reports (subject, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?)';
-    const values = [subject, description, latitude, longitude, image ? image.path : null];
+    const query =
+      'INSERT INTO reports (subject, description, status, image, createdDate, mobile, email, location) VALUES (?, ?, ?, ?, ?,?,?,?)';
+    const values = [subject, description, 0, image ? image.path : null, , , ,];
     await db.promise().query(query, values);
     res.status(201).json({ message: '신고 접수 성공' });
   } catch (error) {
