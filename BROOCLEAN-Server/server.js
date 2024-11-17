@@ -40,6 +40,34 @@ app.get('/api/reports', async (req, res) => {
   }
 });
 
+app.get('/api/myReports', async (req, res) => {
+  const { mobile, email } = req.query;
+
+  // 입력된 mobile과 email을 확인합니다.
+  if (!mobile || !email) {
+    return res.status(400).json({ error: '휴대폰 번호와 이메일은 필수입니다.' });
+  }
+
+  try {
+    const [results] = await db
+      .promise()
+      .query(
+        'SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports WHERE mobile = ? AND email = ?',
+        [mobile, email]
+      );
+
+    // 결과가 없을 경우 처리
+    if (results.length === 0) {
+      return res.status(404).json({ message: '일치하는 신고 내역이 없습니다.' });
+    }
+
+    res.json(results);
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).send('서버 에러');
+  }
+});
+
 // 신고 데이터 디테일 한건만 가져오기
 app.get('/api/report/:caseNo', async (req, res) => {
   const { caseNo } = req.params;

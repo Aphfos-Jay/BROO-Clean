@@ -14,6 +14,16 @@ export const getReports = async () => {
   }
 };
 
+export const getMyReports = async (mobile: string, email: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/myReports?mobile=${encodeURIComponent(mobile)}&email=${encodeURIComponent(email)}`);
+    return response.data;
+  } catch (error) {
+    console.error('신고 목록을 가져오는 중 오류:', error);
+    throw error;
+  }
+};
+
 // 신고 상세 조회
 export const getReportDetail = async (caseNo: string) => {
   try {

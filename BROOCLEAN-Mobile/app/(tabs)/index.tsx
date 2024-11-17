@@ -109,10 +109,16 @@ export default function ReportScreen() {
       <TextInput style={styles.input} placeholder="제목을 입력하세요" value={subject} onChangeText={setSubject} />
 
       <Text style={styles.label}>휴대폰 번호</Text>
-      <TextInput style={styles.input} placeholder="휴대폰 번호" value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
+      <TextInput style={styles.input} placeholder="숫자만 입력해주세요." value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
 
       <Text style={styles.label}>이메일</Text>
-      <TextInput style={styles.input} placeholder="이메일" value={email} onChangeText={setEmail} keyboardType="email-address" />
+      <TextInput
+        style={styles.input}
+        placeholder="example@exmaple.com"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
 
       <Text style={styles.label}>설명</Text>
       <TextInput
