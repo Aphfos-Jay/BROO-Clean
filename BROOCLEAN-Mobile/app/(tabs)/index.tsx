@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ActivityIndicator, ScrollView, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { createReport } from '../../api/api';
 import Button from '@/components/Button';
 
@@ -17,17 +17,31 @@ export default function ReportScreen() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // 초기 권한 요청
   useEffect(() => {
     (async () => {
       const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
       const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+
       if (cameraStatus !== 'granted' || mediaStatus !== 'granted' || locationStatus !== 'granted') {
         Alert.alert('권한 오류', '필수 권한이 부여되지 않았습니다.');
       }
     })();
   }, []);
 
+  // 화면 접근 시마다 상태 초기화
+  useFocusEffect(
+    React.useCallback(() => {
+      setSubject('');
+      setDescription('');
+      setMobile('');
+      setEmail('');
+      setSelectedImage(undefined);
+    }, [])
+  );
+
+  // 사진 선택 함수
   const pickImage = async (source: 'camera' | 'library') => {
     let result;
     if (source === 'camera') {
@@ -53,6 +67,7 @@ export default function ReportScreen() {
     ]);
   };
 
+  // 신고하기
   const handleSubmit = async () => {
     if (!subject || !description || !mobile || !email) {
       Alert.alert('입력 오류', '모든 필드는 필수입니다.');
@@ -63,6 +78,8 @@ export default function ReportScreen() {
 
     try {
       let currentLocation = null;
+
+      // 위치 정보 가져오기 (카메라 사진일 경우)
       if (isCameraPhoto) {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
@@ -74,6 +91,7 @@ export default function ReportScreen() {
         }
       }
 
+      // FormData 객체 생성
       const formData = new FormData();
       formData.append('subject', subject);
       formData.append('description', description);
@@ -81,21 +99,28 @@ export default function ReportScreen() {
       formData.append('email', email);
       formData.append('createdDate', new Date().toISOString());
 
+      // 위치 정보가 있을 경우 POINT 형식으로 추가
       if (currentLocation) {
-        formData.append('latitude', currentLocation.latitude.toString());
-        formData.append('longitude', currentLocation.longitude.toString());
+        formData.append('location', `${currentLocation.longitude},${currentLocation.latitude}`);
       }
 
+      // 이미지 파일 추가
       if (selectedImage) {
         const filename = selectedImage.split('/').pop();
         const fileType = filename?.split('.').pop();
-        formData.append('image', { uri: selectedImage, name: filename, type: `image/${fileType}` } as any);
+        formData.append('image', {
+          uri: selectedImage,
+          name: filename,
+          type: `image/${fileType}`
+        } as any);
       }
 
+      // 신고 데이터 서버로 전송
       await createReport(formData);
       Alert.alert('신고 완료', '신고가 성공적으로 접수되었습니다.');
       router.push('/report-list');
     } catch (error) {
+      console.error('신고 실패:', error);
       Alert.alert('신고 실패', '신고 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -104,7 +129,6 @@ export default function ReportScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* 입력 폼 */}
       <Text style={styles.label}>제목</Text>
       <TextInput style={styles.input} placeholder="제목을 입력하세요" value={subject} onChangeText={setSubject} />
 
@@ -114,7 +138,7 @@ export default function ReportScreen() {
       <Text style={styles.label}>이메일</Text>
       <TextInput
         style={styles.input}
-        placeholder="example@exmaple.com"
+        placeholder="example@example.com"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -129,13 +153,9 @@ export default function ReportScreen() {
         multiline
       />
 
-      {/* 사진 선택 버튼 */}
       <Button theme="picture" label="사진 선택" onPress={handleImagePick} />
-
-      {/* 사진 미리보기 */}
       {selectedImage && <Image source={{ uri: selectedImage }} style={styles.imagePreview} />}
 
-      {/* 신고하기 버튼 */}
       {!loading ? (
         <Button label="신고하기" onPress={handleSubmit} />
       ) : (
@@ -146,7 +166,7 @@ export default function ReportScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#25292e', alignItems: 'center' },
+  container: { padding: 10, backgroundColor: '#25292e', alignItems: 'center' },
   label: { color: '#fff', fontSize: 18, marginVertical: 10, alignSelf: 'flex-start' },
   input: { backgroundColor: '#fff', borderRadius: 8, padding: 10, width: '100%', marginBottom: 15 },
   textArea: { height: 150, textAlignVertical: 'top' },

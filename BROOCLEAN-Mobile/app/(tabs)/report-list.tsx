@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { getMyReports } from '../../api/api';
-import { useRouter } from 'expo-router';
 import Button from '@/components/Button';
 
 type Report = {
@@ -15,11 +15,19 @@ export default function ReportListScreen() {
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 입력 폼 상태 관리
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
 
   const router = useRouter();
+
+  // 탭 접근 시마다 인증 초기화
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsAuthenticated(false);
+      setPhoneNumber('');
+      setEmail('');
+    }, [])
+  );
 
   // 신고 목록 가져오기
   const fetchReports = async () => {
@@ -28,13 +36,11 @@ export default function ReportListScreen() {
       const data = await getMyReports(phoneNumber, email);
       if (data.length === 0) {
         Alert.alert('알림', '신고 내역이 없습니다.');
-        setIsAuthenticated(false); // 신고 내역 없을 시 인증 화면으로 돌아가기
+        setIsAuthenticated(false);
       } else {
         setReports(data);
       }
     } catch (error) {
-      console.error('신고 내역 조회 실패:', error);
-      Alert.alert('오류', '데이터를 불러오는 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -47,20 +53,17 @@ export default function ReportListScreen() {
       return;
     }
 
-    // 이메일 유효성 검사 (기본적인 정규식 사용)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       Alert.alert('입력 오류', '유효한 이메일 주소를 입력해주세요.');
       return;
     }
 
-    // 인증이 완료되면 신고 목록 가져오기
     setIsAuthenticated(true);
     fetchReports();
   };
 
   if (!isAuthenticated) {
-    // 인증 화면
     return (
       <View style={styles.authContainer}>
         <Text style={styles.authTitle}>휴대폰 번호와 이메일을 입력해주세요</Text>
@@ -79,7 +82,7 @@ export default function ReportListScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-        <Button label="확인" onPress={handleAuth} theme="primary" />
+        <Button label="확인" onPress={handleAuth} />
       </View>
     );
   }
