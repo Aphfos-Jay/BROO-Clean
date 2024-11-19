@@ -79,7 +79,6 @@ export default function ReportScreen() {
     try {
       let currentLocation = null;
 
-      // 위치 정보 가져오기 (카메라 사진일 경우)
       if (isCameraPhoto) {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
@@ -91,20 +90,26 @@ export default function ReportScreen() {
         }
       }
 
-      // FormData 객체 생성
       const formData = new FormData();
       formData.append('subject', subject);
       formData.append('description', description);
       formData.append('mobile', mobile);
       formData.append('email', email);
-      formData.append('createdDate', new Date().toISOString());
+      const currentDateTime = new Date();
+      const formattedDate = currentDateTime.toISOString().slice(0, 19).replace('T', ' ');
+      formData.append('createdDate', formattedDate);
 
-      // 위치 정보가 있을 경우 POINT 형식으로 추가
+      // 위치 정보 추가
       if (currentLocation) {
-        formData.append('location', `${currentLocation.longitude},${currentLocation.latitude}`);
+        formData.append(
+          'location',
+          JSON.stringify({
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude
+          })
+        );
       }
 
-      // 이미지 파일 추가
       if (selectedImage) {
         const filename = selectedImage.split('/').pop();
         const fileType = filename?.split('.').pop();
@@ -115,7 +120,11 @@ export default function ReportScreen() {
         } as any);
       }
 
-      // 신고 데이터 서버로 전송
+      // 데이터 확인을 위한 consol
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ': ' + pair[1]);
+      // }
+
       await createReport(formData);
       Alert.alert('신고 완료', '신고가 성공적으로 접수되었습니다.');
       router.push('/report-list');

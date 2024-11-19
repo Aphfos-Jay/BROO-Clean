@@ -2,6 +2,19 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
+const multer = require('multer');
+
+// 파일 업로드 경로 설정
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
 
 app.use(cors());
 app.use(express.json());
@@ -14,7 +27,8 @@ const db = mysql.createPool({
   database: 'brcl_report',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  dateStrings: 'date'
 });
 
 // 데이터베이스 연결 테스트
@@ -110,33 +124,38 @@ app.put('/api/update/:caseNo', async (req, res) => {
 });
 
 // 모바일에서 작성한 신고 데이터 저장 API
-app.post('/api/mobileCreate', async (req, res) => {
+app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
   const { subject, description, mobile, email, createdDate, location } = req.body;
   const image = req.files?.image;
 
   try {
-    // 위치 데이터를 POINT 형식으로 변환
+    // 프론트엔드로부터 받은 데이터 출력
+    // console.log('Request body:', req.body);
+
     let locationPoint = null;
+
+    // location 파싱 (JSON 형태에서 추출)
     if (location) {
-      const [longitude, latitude] = location.split(',').map(Number);
-      locationPoint = { type: 'Point', coordinates: [longitude, latitude] };
+      const { latitude, longitude } = JSON.parse(location);
+      locationPoint = `POINT(${latitude},${longitude})`;
     }
 
     const query = `
       INSERT INTO reports (subject, description, status, image, createdDate, mobile, email, location)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?))
+      VALUES (?, ?, ?, ?, ?, ?, ?, ${locationPoint ? locationPoint : 'NULL'})
     `;
 
     const values = [
       subject,
       description,
-      0, // 신고 상태 (0: 접수됨)
+      0, // 상태 (0: 접수됨)
       image ? image.path : null,
       createdDate,
       mobile,
-      email,
-      locationPoint ? `POINT(${locationPoint.coordinates.join(' ')})` : null
+      email
     ];
+
+    console.log('쿼리 데이터:', values); // 전달되는 데이터 확인
 
     await db.promise().query(query, values);
     res.status(201).json({ message: '신고 접수 성공' });
