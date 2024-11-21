@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Alert, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, ScrollView, Alert, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { getReportDetail } from '../api/api';
 
 const screenWidth = Dimensions.get('window').width;
+const BASE_URL = 'http://192.168.45.250:5000';
 
 export default function ReportDetailScreen() {
   const { caseNo } = useLocalSearchParams();
@@ -53,7 +54,9 @@ export default function ReportDetailScreen() {
   }
 
   const { x, y } = report.location || {};
-
+  const localCreatedDate = new Date(report.createdDate);
+  localCreatedDate.setHours(localCreatedDate.getHours() + 9); // KST 변환
+  console.log('Image URL:', `${BASE_URL}${report.image}`);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{report.subject}</Text>
@@ -61,6 +64,16 @@ export default function ReportDetailScreen() {
         <Text style={styles.label}>설명</Text>
         <Text style={styles.value}>{report.description || '설명 없음'}</Text>
       </View>
+      {report.image && (
+        <View style={styles.imageContainer}>
+          <Text style={styles.label}>첨부된 이미지</Text>
+          <Image
+            source={{ uri: `${BASE_URL}${report.image}` }} // 이미지 URL
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
+      )}
       <View style={styles.detailBox}>
         <Text style={styles.label}>상태</Text>
         <Text style={styles.value}>{report.status || '상태 없음'}</Text>
@@ -97,7 +110,7 @@ export default function ReportDetailScreen() {
       </View>
       <View style={styles.detailBox}>
         <Text style={styles.label}>작성일</Text>
-        <Text style={styles.value}>{report.createdDate ? new Date(report.createdDate).toLocaleString() : '작성일 정보 없음'}</Text>
+        <Text style={styles.value}>{report.createdDate ? new Date(localCreatedDate).toLocaleString() : '작성일 정보 없음'}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <Text style={styles.buttonText} onPress={() => router.push('/report-list')}>
@@ -173,5 +186,7 @@ const styles = StyleSheet.create({
     color: '#25292e',
     fontSize: 18,
     fontWeight: 'bold'
-  }
+  },
+  imageContainer: { marginTop: 20 },
+  image: { width: screenWidth - 40, height: 300, borderRadius: 10 }
 });

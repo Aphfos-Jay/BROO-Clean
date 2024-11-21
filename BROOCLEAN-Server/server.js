@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
@@ -10,7 +11,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, file.originalname);
   }
 });
 
@@ -18,6 +19,7 @@ const upload = multer({ storage });
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MySQL 연결 설정
 const db = mysql.createPool({
@@ -89,7 +91,7 @@ app.get('/api/report/:caseNo', async (req, res) => {
     const [result] = await db
       .promise()
       .query(
-        'SELECT caseNumber, subject, status, mobile, email, createdDate, description, location, comment FROM reports WHERE caseNumber = ?',
+        'SELECT caseNumber, subject, status, mobile, email, createdDate, description, location, comment, image FROM reports WHERE caseNumber = ?',
         [caseNo]
       );
 
@@ -126,12 +128,11 @@ app.put('/api/update/:caseNo', async (req, res) => {
 // 모바일에서 작성한 신고 데이터 저장 API
 app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
   const { subject, description, mobile, email, createdDate, location } = req.body;
-  const image = req.files?.image;
-
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+  console.log('Uploaded file:', req.file); // 디버그용
   try {
     // 프론트엔드로부터 받은 데이터 출력
-    // console.log('Request body:', req.body);
-
+    console.log('Uploaded file:', req.file); // 디버그용
     let locationPoint = null;
 
     // location 파싱 (JSON 형태에서 추출)
@@ -149,7 +150,7 @@ app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
       subject,
       description,
       0, // 상태 (0: 접수됨)
-      image ? image.path : null,
+      (image = imagePath),
       createdDate,
       mobile,
       email
