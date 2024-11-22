@@ -48,7 +48,7 @@ app.get('/api/reports', async (req, res) => {
   try {
     const [results] = await db
       .promise()
-      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports');
+      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports ORDER BY caseNumber DESC ');
     res.json(results);
   } catch (error) {
     console.error('서버 오류:', error);
