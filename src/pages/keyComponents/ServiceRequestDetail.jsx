@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import MainCard from 'components/MainCard';
-import ServiceRequestMap from 'components/ServiceRequestMap';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -23,8 +22,6 @@ const ServiceRequestDetail = () => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(0);
   const [comment, setComment] = useState('');
-
-  const BASE_URL = 'http://192.168.75.187:5000/api';
 
   useEffect(() => {
     axios
@@ -73,9 +70,6 @@ const ServiceRequestDetail = () => {
 
   const { caseNumber, subject, mobile, email, createdDate, description, location } = caseData;
 
-  // +9시간 조정된 날짜
-  const adjustedDate = new Date(new Date(createdDate).getTime() + 9 * 60 * 60 * 1000).toLocaleString();
-
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -92,7 +86,7 @@ const ServiceRequestDetail = () => {
               <Stack spacing={2}>
                 <Box>
                   <Typography variant="body1">
-                    <strong>접수 일자:</strong> {adjustedDate}
+                    <strong>접수 일자:</strong> {new Date(createdDate).toLocaleString()}
                   </Typography>
                 </Box>
                 <Box>
@@ -104,13 +98,6 @@ const ServiceRequestDetail = () => {
                   <Typography variant="body1">
                     <strong>좌표:</strong> {`(${location?.x}, ${location?.y})`}
                   </Typography>
-                  <Typography variant="h6" color="secondary" gutterBottom>
-                    위치 정보 (지도)
-                  </Typography>
-                  <Typography variant="h6" color="secondary" gutterBottom>
-                    위치 정보 (지도)
-                  </Typography>
-                  <ServiceRequestMap location={{ x: location?.x, y: location?.y }} />
                 </Box>
                 <Box>
                   <Typography variant="body1">
@@ -120,7 +107,7 @@ const ServiceRequestDetail = () => {
                 <Box>
                   <strong>첨부 이미지</strong>
                   <Typography variant="body1">
-                    <img src="/NYC.PNG" width="800px" alt="첨부 이미지" />
+                    <img src="/NYC.PNG" width="800px" />
                   </Typography>
                 </Box>
               </Stack>

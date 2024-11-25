@@ -148,7 +148,7 @@ export default function ServiceRequest() {
                   </TableCell>
                   <TableCell align="right">{row.mobile}</TableCell>
                   <TableCell align="right">{row.email}</TableCell>
-                  <TableCell align="right">{new Date(new Date(row.createdDate).getTime() + 9 * 60 * 60 * 1000).toLocaleString()}</TableCell>
+                  <TableCell align="right">{row.createdDate}</TableCell>
                 </TableRow>
               ))
             ) : (

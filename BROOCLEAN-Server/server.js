@@ -1,25 +1,10 @@
 const express = require('express');
-const path = require('path');
 const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
-const multer = require('multer');
-
-// 파일 업로드 경로 설정
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  }
-});
-
-const upload = multer({ storage });
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MySQL 연결 설정
 const db = mysql.createPool({
@@ -29,8 +14,7 @@ const db = mysql.createPool({
   database: 'brcl_report',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
-  dateStrings: 'date'
+  queueLimit: 0
 });
 
 // 데이터베이스 연결 테스트
@@ -48,35 +32,7 @@ app.get('/api/reports', async (req, res) => {
   try {
     const [results] = await db
       .promise()
-      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports ORDER BY caseNumber DESC ');
-    res.json(results);
-  } catch (error) {
-    console.error('서버 오류:', error);
-    res.status(500).send('서버 에러');
-  }
-});
-
-app.get('/api/myReports', async (req, res) => {
-  const { mobile, email } = req.query;
-
-  // 입력된 mobile과 email을 확인합니다.
-  if (!mobile || !email) {
-    return res.status(400).json({ error: '휴대폰 번호와 이메일은 필수입니다.' });
-  }
-
-  try {
-    const [results] = await db
-      .promise()
-      .query(
-        'SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports WHERE mobile = ? AND email = ?',
-        [mobile, email]
-      );
-
-    // 결과가 없을 경우 처리
-    if (results.length === 0) {
-      return res.status(404).json({ message: '일치하는 신고 내역이 없습니다.' });
-    }
-
+      .query('SELECT caseNumber, subject, status, mobile, email, createdDate, location, comment FROM reports');
     res.json(results);
   } catch (error) {
     console.error('서버 오류:', error);
@@ -91,7 +47,7 @@ app.get('/api/report/:caseNo', async (req, res) => {
     const [result] = await db
       .promise()
       .query(
-        'SELECT caseNumber, subject, status, mobile, email, createdDate, description, location, comment, image FROM reports WHERE caseNumber = ?',
+        'SELECT caseNumber, subject, status, mobile, email, createdDate, description, location, comment FROM reports WHERE caseNumber = ?',
         [caseNo]
       );
 
@@ -126,38 +82,13 @@ app.put('/api/update/:caseNo', async (req, res) => {
 });
 
 // 모바일에서 작성한 신고 데이터 저장 API
-app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
-  const { subject, description, mobile, email, createdDate, location } = req.body;
-  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-  console.log('Uploaded file:', req.file); // 디버그용
+app.post('/api/mobileCreate', async (req, res) => {
+  const { subject, description, latitude, longitude } = req.body;
+  const image = req.files?.image;
+
   try {
-    // 프론트엔드로부터 받은 데이터 출력
-    console.log('Uploaded file:', req.file); // 디버그용
-    let locationPoint = null;
-
-    // location 파싱 (JSON 형태에서 추출)
-    if (location) {
-      const { latitude, longitude } = JSON.parse(location);
-      locationPoint = `POINT(${latitude},${longitude})`;
-    }
-
-    const query = `
-      INSERT INTO reports (subject, description, status, image, createdDate, mobile, email, location)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ${locationPoint ? locationPoint : 'NULL'})
-    `;
-
-    const values = [
-      subject,
-      description,
-      0, // 상태 (0: 접수됨)
-      (image = imagePath),
-      createdDate,
-      mobile,
-      email
-    ];
-
-    console.log('쿼리 데이터:', values); // 전달되는 데이터 확인
-
+    const query = 'INSERT INTO reports (subject, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?)';
+    const values = [subject, description, latitude, longitude, image ? image.path : null];
     await db.promise().query(query, values);
     res.status(201).json({ message: '신고 접수 성공' });
   } catch (error) {

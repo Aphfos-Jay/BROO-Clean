@@ -1,33 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator, ScrollView, Alert, Dimensions } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { View, Text, Button, StyleSheet, ActivityIndicator } from 'react-native';
+import { getReportDetail, updateReportStatus } from '../api/api';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { getReportDetail } from '../api/api';
-
-const screenWidth = Dimensions.get('window').width;
-const BASE_URL = 'http://192.168.45.250:5000';
 
 export default function ReportDetailScreen() {
   const { caseNo } = useLocalSearchParams();
-  const [report, setReport] = useState<any>(null);
+  const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchReportDetail = async () => {
-      if (!caseNo) {
-        Alert.alert('오류', '유효하지 않은 요청입니다.');
-        return;
-      }
+      if (!caseNo) return;
       try {
         const data = await getReportDetail(caseNo as string);
-        if (data) {
-          setReport(data);
-        } else {
-          Alert.alert('데이터 없음', '해당 신고 데이터를 찾을 수 없습니다.');
-        }
+        setReport(data);
       } catch (error) {
-        Alert.alert('오류', '데이터를 불러오는 중 문제가 발생했습니다.');
         console.error(error);
       } finally {
         setLoading(false);
@@ -36,157 +24,27 @@ export default function ReportDetailScreen() {
     fetchReportDetail();
   }, [caseNo]);
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#ffd33d" />
-      </View>
-    );
-  }
+  if (loading) return <ActivityIndicator size="large" color="#ffd33d" />;
 
-  if (!report) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>신고 데이터를 찾을 수 없습니다.</Text>
-        <Text style={styles.errorText}>이전 화면으로 돌아가 다시 시도해주세요.</Text>
-      </View>
-    );
-  }
-
-  const { x, y } = report.location || {};
-  const localCreatedDate = new Date(report.createdDate);
-  localCreatedDate.setHours(localCreatedDate.getHours() + 9); // KST 변환
-  console.log('Image URL:', `${BASE_URL}${report.image}`);
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{report.subject}</Text>
-      <View style={styles.detailBox}>
-        <Text style={styles.label}>설명</Text>
-        <Text style={styles.value}>{report.description || '설명 없음'}</Text>
-      </View>
-      {report.image && (
-        <View style={styles.imageContainer}>
-          <Text style={styles.label}>첨부된 이미지</Text>
-          <Image
-            source={{ uri: `${BASE_URL}${report.image}` }} // 이미지 URL
-            style={styles.image}
-            resizeMode="contain"
-          />
-        </View>
+    <View style={styles.container}>
+      {report ? (
+        <>
+          <Text style={styles.text}>제목: {report.subject}</Text>
+          <Text style={styles.text}>설명: {report.description}</Text>
+          <Text style={styles.text}>상태: {report.status}</Text>
+          {/* location이 객체일 경우 JSON.stringify를 사용하여 문자열로 변환 */}
+          <Text style={styles.text}>위치: {typeof report.location === 'object' ? JSON.stringify(report.location) : report.location}</Text>
+          <Text style={styles.text}>생성일: {report.createdDate}</Text>
+        </>
+      ) : (
+        <Text>데이터를 찾을 수 없습니다.</Text>
       )}
-      <View style={styles.detailBox}>
-        <Text style={styles.label}>상태</Text>
-        <Text style={styles.value}>{report.status || '상태 없음'}</Text>
-      </View>
-      <View style={styles.detailBox}>
-        <Text style={styles.label}>위치</Text>
-        {x && y ? (
-          <>
-            <Text style={styles.value}>
-              Lat: {x}, Lon: {y}
-            </Text>
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: parseFloat(x),
-                longitude: parseFloat(y),
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01
-              }}
-            >
-              <Marker
-                coordinate={{
-                  latitude: parseFloat(x),
-                  longitude: parseFloat(y)
-                }}
-                title={report.subject}
-                description={report.description}
-              />
-            </MapView>
-          </>
-        ) : (
-          <Text style={styles.value}>위치 정보 없음</Text>
-        )}
-      </View>
-      <View style={styles.detailBox}>
-        <Text style={styles.label}>작성일</Text>
-        <Text style={styles.value}>{report.createdDate ? new Date(localCreatedDate).toLocaleString() : '작성일 정보 없음'}</Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Text style={styles.buttonText} onPress={() => router.push('/report-list')}>
-          목록으로 돌아가기
-        </Text>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: '#25292e',
-    flexGrow: 1
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#25292e'
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#25292e',
-    padding: 20
-  },
-  errorText: {
-    color: '#ff5c5c',
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 10
-  },
-  title: {
-    fontSize: 24,
-    color: '#ffd33d',
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center'
-  },
-  detailBox: {
-    marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-    paddingBottom: 10
-  },
-  label: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 5
-  },
-  value: {
-    fontSize: 18,
-    color: '#ddd',
-    fontWeight: '500'
-  },
-  map: {
-    width: screenWidth - 40,
-    height: 200,
-    marginTop: 10,
-    borderRadius: 10
-  },
-  buttonContainer: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#ffd33d',
-    borderRadius: 8,
-    alignItems: 'center'
-  },
-  buttonText: {
-    color: '#25292e',
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
-  imageContainer: { marginTop: 20 },
-  image: { width: screenWidth - 40, height: 300, borderRadius: 10 }
+  container: { flex: 1, padding: 20, backgroundColor: '#25292e' },
+  text: { color: '#fff', marginBottom: 10 }
 });

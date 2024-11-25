@@ -13,10 +13,8 @@
     "cors": "^2.8.5",
     "expo-image": "^2.0.0",
     "express": "^4.21.1",
-    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.4",
-    "react": "^18.3.1",
-    "react-native-maps": "^1.20.0"
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "metro-config": "^0.81.0"
