@@ -71,10 +71,11 @@ const ServiceRequestDetail = () => {
     );
   }
 
-  const { caseNumber, subject, mobile, email, createdDate, description, location } = caseData;
+  const { caseNumber, subject, mobile, email, createdDate, description, location, image } = caseData;
 
   // +9시간 조정된 날짜
   const adjustedDate = new Date(new Date(createdDate).getTime() + 9 * 60 * 60 * 1000).toLocaleString();
+  const adjustImage = 'http://localhost:5000' + image;
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -107,9 +108,6 @@ const ServiceRequestDetail = () => {
                   <Typography variant="h6" color="secondary" gutterBottom>
                     위치 정보 (지도)
                   </Typography>
-                  <Typography variant="h6" color="secondary" gutterBottom>
-                    위치 정보 (지도)
-                  </Typography>
                   <ServiceRequestMap location={{ x: location?.x, y: location?.y }} />
                 </Box>
                 <Box>
@@ -120,7 +118,7 @@ const ServiceRequestDetail = () => {
                 <Box>
                   <strong>첨부 이미지</strong>
                   <Typography variant="body1">
-                    <img src="/NYC.PNG" width="800px" alt="첨부 이미지" />
+                    <img src={adjustImage} width="800px" />
                   </Typography>
                 </Box>
               </Stack>

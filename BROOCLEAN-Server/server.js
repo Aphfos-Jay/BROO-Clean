@@ -166,6 +166,35 @@ app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
   }
 });
 
+app.get('/api/reverse-geocode', async (req, res) => {
+  const { x, y } = req.query;
+  console.log(' 여기가 실행 되었음!');
+  console.log('x, y ==> ' + x, y);
+
+  if (!x || !y) {
+    return res.status(400).json({ error: 'x와 y 좌표가 필요합니다.' });
+  }
+
+  const url = `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${y},${x}&sourcecrs=epsg:4326&orders=admcode,roadaddr&output=json`;
+  const clientId = 'brjvrajhzz';
+  const clientSecret = 'pJIztOnNipj8oqbLNdbWZJYbLUN5Kf3u9beBCAW0';
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': clientId,
+        'X-NCP-APIGW-API-KEY': clientSecret
+      }
+    });
+
+    const data = await response.json();
+    console.log('서버쪽 Response Data ==> ' + JSON.stringify(data));
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Reverse Geocoding 요청 실패' });
+  }
+});
+
 // 서버 시작
 const PORT = 5000;
 app.listen(PORT, () => {
