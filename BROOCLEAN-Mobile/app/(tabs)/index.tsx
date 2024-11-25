@@ -1,30 +1,56 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, Alert, ActivityIndicator, ScrollView, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { useRouter } from 'expo-router';
-import axios from 'axios';
-
-import ImageViewer from '@/components/ImageViewer';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { createReport } from '../../api/api';
 import Button from '@/components/Button';
-
-const PlaceholderImage = require('@/assets/images/background-image.png');
 
 export default function ReportScreen() {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [email, setEmail] = useState('');
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
+  const [isCameraPhoto, setIsCameraPhoto] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // 이미지 선택 함수
-  const pickImageAsync = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1
-    });
+  // 초기 권한 요청
+  useEffect(() => {
+    (async () => {
+      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+
+      if (cameraStatus !== 'granted' || mediaStatus !== 'granted' || locationStatus !== 'granted') {
+        Alert.alert('권한 오류', '필수 권한이 부여되지 않았습니다.');
+      }
+    })();
+  }, []);
+
+  // 화면 접근 시마다 상태 초기화
+  useFocusEffect(
+    React.useCallback(() => {
+      setSubject('');
+      setDescription('');
+      setMobile('');
+      setEmail('');
+      setSelectedImage(undefined);
+    }, [])
+  );
+
+  // 사진 선택 함수
+  const pickImage = async (source: 'camera' | 'library') => {
+    let result;
+    if (source === 'camera') {
+      result = await ImagePicker.launchCameraAsync({ allowsEditing: true, quality: 1 });
+      setIsCameraPhoto(true);
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, quality: 1 });
+      setIsCameraPhoto(false);
+    }
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
@@ -33,42 +59,60 @@ export default function ReportScreen() {
     }
   };
 
-  // 위치 정보 가져오기 함수
-  const getLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('위치 권한이 필요합니다.');
-      return;
-    }
-
-    const currentLocation = await Location.getCurrentPositionAsync({});
-    setLocation({
-      latitude: currentLocation.coords.latitude,
-      longitude: currentLocation.coords.longitude
-    });
-    Alert.alert('위치 정보 가져오기 완료');
+  const handleImagePick = () => {
+    Alert.alert('사진 선택', '옵션을 선택하세요.', [
+      { text: '취소', style: 'cancel' },
+      { text: '촬영하기', onPress: () => pickImage('camera') },
+      { text: '저장소에서 선택', onPress: () => pickImage('library') }
+    ]);
   };
 
-  // 신고 데이터 서버로 전송
+  // 신고하기
   const handleSubmit = async () => {
-    if (!subject || !description || !location) {
-      Alert.alert('입력 오류', '모든 필드를 입력해주세요.');
+    if (!subject || !description || !mobile || !email) {
+      Alert.alert('입력 오류', '모든 필드는 필수입니다.');
       return;
     }
 
     setLoading(true);
 
     try {
+      let currentLocation = null;
+
+      if (isCameraPhoto) {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({});
+          currentLocation = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
+          setLocation(currentLocation);
+        } else {
+          Alert.alert('위치 권한이 필요합니다.');
+        }
+      }
+
       const formData = new FormData();
       formData.append('subject', subject);
       formData.append('description', description);
-      formData.append('latitude', location.latitude.toString());
-      formData.append('longitude', location.longitude.toString());
+      formData.append('mobile', mobile);
+      formData.append('email', email);
+      const currentDateTime = new Date();
+      const formattedDate = currentDateTime.toISOString().slice(0, 19).replace('T', ' ');
+      formData.append('createdDate', formattedDate);
+
+      // 위치 정보 추가
+      if (currentLocation) {
+        formData.append(
+          'location',
+          JSON.stringify({
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude
+          })
+        );
+      }
 
       if (selectedImage) {
         const filename = selectedImage.split('/').pop();
         const fileType = filename?.split('.').pop();
-
         formData.append('image', {
           uri: selectedImage,
           name: filename,
@@ -76,10 +120,12 @@ export default function ReportScreen() {
         } as any);
       }
 
-      await axios.post('http://localhost:5000/api/report', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // 데이터 확인을 위한 consol
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ': ' + pair[1]);
+      // }
 
+      await createReport(formData);
       Alert.alert('신고 완료', '신고가 성공적으로 접수되었습니다.');
       router.push('/report-list');
     } catch (error) {
@@ -91,17 +137,22 @@ export default function ReportScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* 이미지 뷰어 */}
-      <View style={styles.imageContainer}>
-        <ImageViewer imgSource={PlaceholderImage} selectedImage={selectedImage} />
-      </View>
-
-      {/* 제목 입력 */}
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>제목</Text>
       <TextInput style={styles.input} placeholder="제목을 입력하세요" value={subject} onChangeText={setSubject} />
 
-      {/* 설명 입력 */}
+      <Text style={styles.label}>휴대폰 번호</Text>
+      <TextInput style={styles.input} placeholder="숫자만 입력해주세요." value={mobile} onChangeText={setMobile} keyboardType="phone-pad" />
+
+      <Text style={styles.label}>이메일</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="example@example.com"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+
       <Text style={styles.label}>설명</Text>
       <TextInput
         style={[styles.input, styles.textArea]}
@@ -111,40 +162,22 @@ export default function ReportScreen() {
         multiline
       />
 
-      {/* 위치 가져오기 버튼 */}
-      <Button label="위치 정보 가져오기" onPress={getLocation} />
+      <Button theme="picture" label="사진 선택" onPress={handleImagePick} />
+      {selectedImage && <Image source={{ uri: selectedImage }} style={styles.imagePreview} />}
 
-      {/* 위치 정보 표시 */}
-      {location && (
-        <Text style={styles.locationText}>
-          위치: {location.latitude}, {location.longitude}
-        </Text>
-      )}
-
-      {/* 사진 선택 버튼 */}
-      <Button theme="picture" label="사진 선택" onPress={pickImageAsync} />
-
-      {/* 로딩 표시 & 신고하기 버튼 */}
-      {loading ? (
-        <ActivityIndicator size="large" color="#ffd33d" style={{ marginTop: 20 }} />
-      ) : (
+      {!loading ? (
         <Button label="신고하기" onPress={handleSubmit} />
+      ) : (
+        <ActivityIndicator size="large" color="#ffd33d" style={{ marginTop: 20 }} />
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#25292e', justifyContent: 'center' },
-  imageContainer: { alignItems: 'center', marginBottom: 20 },
-  label: { color: '#fff', fontSize: 18, marginBottom: 10 },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-    fontSize: 16
-  },
-  textArea: { height: 100, textAlignVertical: 'top' },
-  locationText: { color: '#ffd33d', marginVertical: 10, textAlign: 'center' }
+  container: { padding: 10, backgroundColor: '#25292e', alignItems: 'center' },
+  label: { color: '#fff', fontSize: 18, marginVertical: 10, alignSelf: 'flex-start' },
+  input: { backgroundColor: '#fff', borderRadius: 8, padding: 10, width: '100%', marginBottom: 15 },
+  textArea: { height: 150, textAlignVertical: 'top' },
+  imagePreview: { width: 300, height: 300, marginVertical: 20, borderRadius: 15 }
 });
