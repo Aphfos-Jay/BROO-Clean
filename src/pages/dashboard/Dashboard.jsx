@@ -30,6 +30,14 @@ import Gi from 'assets/images/users/Gi.jpg';
 import Gyu from 'assets/images/users/Gyu.jpg';
 import Yong from 'assets/images/users/Yong.jpg';
 
+
+// Charts
+
+import AccidentRegionChart from './AccidentRegionChart';
+import AccidentTypeChart from './AccidentTypeChart';
+import VesselUsageDonut from './VesselUsageDonut';
+
+
 // avatar style
 const avatarSX = {
   width: 36,
@@ -71,7 +79,64 @@ export default function Dashboard() {
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
-      {/* row 2 */}
+
+{/*   Python으로 구동하는 지도 표현 코드 
+
+      <Grid item xs={12}>
+        <MainCard sx={{ mt: 2 }}>
+          <Typography variant="h5" gutterBottom>
+            Marine Pollution Map
+          </Typography>
+          <iframe
+            src="http://localhost:8501/" // Streamlit 서버 URL
+            style={{
+              width: '100%',
+              height: '1000px',
+              border: 'none',
+              marginTop: '20px'
+            }}
+            title="Marine Pollution Map"
+          ></iframe>
+        </MainCard>
+      </Grid>
+*/}
+
+
+
+      {/* 지용_추가된 차트들 */}
+      <Grid item xs={12} md={6}>
+        <MainCard sx={{ mt: 2 }}>
+          <Typography variant="h5" gutterBottom>
+            Region-wise Accident Counts
+          </Typography>
+          <AccidentRegionChart />
+        </MainCard>
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <MainCard sx={{ mt: 2 }}>
+          <Typography variant="h5" gutterBottom>
+            Accident Types Distribution
+          </Typography>
+          <AccidentTypeChart />
+        </MainCard>
+      </Grid>
+
+      
+      <Grid item xs={12} md={6}>
+        <MainCard sx={{ mt: 2 }}>
+          <Typography variant="h5" gutterBottom>
+            Vessel Usage Statistics
+          </Typography>
+          <VesselUsageDonut />
+        </MainCard>
+      </Grid>
+                  
+
+
+
+
+      {/* row 3 */}
       <Grid item xs={12} md={7} lg={8}>
         <UniqueVisitorCard />
       </Grid>
@@ -95,7 +160,7 @@ export default function Dashboard() {
         </MainCard>
       </Grid>
 
-      {/* row 3 */}
+      {/* row 4 */}
       <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
@@ -133,7 +198,7 @@ export default function Dashboard() {
         </MainCard>
       </Grid>
 
-      {/* row 4 */}
+      {/* row 5 */}
       <Grid item xs={12} md={7} lg={8}>
         <SaleReportCard />
       </Grid>
