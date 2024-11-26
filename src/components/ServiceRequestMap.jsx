@@ -32,17 +32,13 @@ const ServiceRequestMap = ({ location }) => {
       try {
         const response = await axios.get(`http://localhost:5000/api/reverse-geocode?x=${x}&y=${y}`);
         const data = response.data;
-
         const region = data.results[0].region;
 
         if (region) {
-          console.log('낫널');
           const addr = region.area1.name + ' ' + region.area2.name + ' ' + region.area3.name;
-          console.log('addr ==> ' + addr);
           setAddress(addr);
         } else {
-          console.log('널');
-          // console.error('Reverse Geocoding 결과 없음');
+          console.error('Reverse Geocoding 결과 없음');
         }
       } catch (error) {
         console.error('Reverse Geocoding 요청 실패:', error);

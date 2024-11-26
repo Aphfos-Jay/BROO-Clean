@@ -7,7 +7,7 @@ import home from './homeMain';
 
 // ==============================|| MENU ITEMS ||============================== //
 const menuItems = {
-  items: [home, support, personal, utilities]
+  items: [home, support, personal]
 };
 
 export default menuItems;
