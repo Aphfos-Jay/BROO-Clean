@@ -24,10 +24,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MySQL 연결 설정
 const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root', // 본인의 MySQL 사용자 이름
-  password: 'brcladmin1!', // 본인의 MySQL 비밀번호
-  database: 'brcl_report',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_DB,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
