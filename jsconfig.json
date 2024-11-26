@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "baseUrl": "src"
-  },
-  "include": ["src/**/*", "src/menu-items/.jsx"],
-  "exclude": ["node_modules"]
-}
