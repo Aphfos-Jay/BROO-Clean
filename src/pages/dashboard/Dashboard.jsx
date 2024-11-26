@@ -12,14 +12,17 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-// project import
+//brooclean Chart
 import MainCard from 'components/MainCard';
-import MonthlyBarChart from './MonthlyBarChart';
-import ReportAreaChart from './ReportAreaChart';
-import UniqueVisitorCard from './UniqueVisitorCard';
-import SaleReportCard from './SaleReportCard';
-import OrdersTable from './OrdersTable';
 import ReportSummary from './ReportSummary';
+import MonthlyAccidentsReportCard from './MonthlyAccidentsReportCard';
+// project import
+
+import MonthlyBarChart from './MonthlyBarChart';
+import CasualtiesChart from './CasualtiesChart';
+import UniqueVisitorCard from './UniqueVisitorCard';
+
+import OrdersTable from './OrdersTable';
 
 // assets
 import GiftOutlined from '@ant-design/icons/GiftOutlined';
@@ -61,7 +64,24 @@ export default function Dashboard() {
         <ReportSummary />
       </Grid>
 
-      {/* row 2 */}
+      {/* row 2 Accident Monthly Report, Casualties Report */}
+      <Grid item xs={12} md={7} lg={7}>
+        <MonthlyAccidentsReportCard />
+      </Grid>
+
+      <Grid item xs={12} md={5} lg={5}>
+        <Grid container alignItems="center" justifyContent="space-between">
+          <Grid item>
+            <Typography variant="h5">Casualties Report</Typography>
+          </Grid>
+          <Grid item />
+        </Grid>
+        <MainCard sx={{ mt: 2 }} content={false}>
+          <CasualtiesChart />
+        </MainCard>
+      </Grid>
+
+      {/******************************************** */}
       <Grid item xs={12} md={7} lg={8}>
         <UniqueVisitorCard />
       </Grid>
@@ -119,118 +139,11 @@ export default function Dashboard() {
               <Typography variant="h5">Low</Typography>
             </ListItemButton>
           </List>
-          <ReportAreaChart />
+          <CasualtiesChart />
         </MainCard>
       </Grid>
 
       {/* row 4 */}
-      <Grid item xs={12} md={7} lg={8}>
-        <SaleReportCard />
-      </Grid>
-      <Grid item xs={12} md={5} lg={4}>
-        <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item>
-            <Typography variant="h5">Transaction History</Typography>
-          </Grid>
-          <Grid item />
-        </Grid>
-        <MainCard sx={{ mt: 2 }} content={false}>
-          <List
-            component="nav"
-            sx={{
-              px: 0,
-              py: 0,
-              '& .MuiListItemButton-root': {
-                py: 1.5,
-                '& .MuiAvatar-root': avatarSX,
-                '& .MuiListItemSecondaryAction-root': { ...actionSX, position: 'relative' }
-              }
-            }}
-          >
-            <ListItemButton divider>
-              <ListItemAvatar>
-                <Avatar sx={{ color: 'success.main', bgcolor: 'success.lighter' }}>
-                  <GiftOutlined />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={<Typography variant="subtitle1">Order #002434</Typography>} secondary="Today, 2:00 AM" />
-              <ListItemSecondaryAction>
-                <Stack alignItems="flex-end">
-                  <Typography variant="subtitle1" noWrap>
-                    + $1,430
-                  </Typography>
-                  <Typography variant="h6" color="secondary" noWrap>
-                    78%
-                  </Typography>
-                </Stack>
-              </ListItemSecondaryAction>
-            </ListItemButton>
-            <ListItemButton divider>
-              <ListItemAvatar>
-                <Avatar sx={{ color: 'primary.main', bgcolor: 'primary.lighter' }}>
-                  <MessageOutlined />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={<Typography variant="subtitle1">Order #984947</Typography>} secondary="5 August, 1:45 PM" />
-              <ListItemSecondaryAction>
-                <Stack alignItems="flex-end">
-                  <Typography variant="subtitle1" noWrap>
-                    + $302
-                  </Typography>
-                  <Typography variant="h6" color="secondary" noWrap>
-                    8%
-                  </Typography>
-                </Stack>
-              </ListItemSecondaryAction>
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemAvatar>
-                <Avatar sx={{ color: 'error.main', bgcolor: 'error.lighter' }}>
-                  <SettingOutlined />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={<Typography variant="subtitle1">Order #988784</Typography>} secondary="7 hours ago" />
-              <ListItemSecondaryAction>
-                <Stack alignItems="flex-end">
-                  <Typography variant="subtitle1" noWrap>
-                    + $682
-                  </Typography>
-                  <Typography variant="h6" color="secondary" noWrap>
-                    16%
-                  </Typography>
-                </Stack>
-              </ListItemSecondaryAction>
-            </ListItemButton>
-          </List>
-        </MainCard>
-        <MainCard sx={{ mt: 2 }}>
-          <Stack spacing={3}>
-            <Grid container justifyContent="space-between" alignItems="center">
-              <Grid item>
-                <Stack>
-                  <Typography variant="h5" noWrap>
-                    Help & Support Chat
-                  </Typography>
-                  <Typography variant="caption" color="secondary" noWrap>
-                    Typical replay within 5 min
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid item>
-                <AvatarGroup sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
-                  <Avatar alt="Remy Sharp" src={Jay} />
-                  <Avatar alt="Travis Howard" src={Gi} />
-                  <Avatar alt="Cindy Baker" src={Gyu} />
-                  <Avatar alt="Agnes Walker" src={Yong} />
-                </AvatarGroup>
-              </Grid>
-            </Grid>
-            <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
-              Need Help?
-            </Button>
-          </Stack>
-        </MainCard>
-      </Grid>
     </Grid>
   );
 }

@@ -1,65 +1,41 @@
-import MainCard from 'components/MainCard';
-
-import React, { useState, useEffect } from 'react';
-import Plot from 'react-plotly.js';
-
-const marineAccidentData = [
-  { region: 'Incheon', year: 2023, incidents: 50 },
-  { region: 'Busan', year: 2023, incidents: 70 },
-  { region: 'Jeju', year: 2023, incidents: 30 },
-  { region: 'Incheon', year: 2024, incidents: 40 },
-  { region: 'Busan', year: 2024, incidents: 60 },
-  { region: 'Jeju', year: 2024, incidents: 20 }
-];
+import React, { useState } from 'react';
+import MainCard from '../../components/MainCard';
 
 export default function Accident() {
-  const [selectedRegion, setSelectedRegion] = useState('Incheon');
-  const [filteredData, setFilteredData] = useState([]);
+  const [selectedYear, setSelectedYear] = useState('2023');
 
-  useEffect(() => {
-    const data = marineAccidentData.filter((item) => item.region === selectedRegion);
-    setFilteredData(data);
-  }, [selectedRegion]);
+  // 연도별 HTML 파일 경로 매핑
+  const fileMap = {
+    2022: 'http://localhost:5000/heatMap/accident_visualization_2022.html',
+    2023: 'http://localhost:5000/heatMap/accident_visualization_2023.html'
+  };
 
   return (
     <MainCard>
       <h1>Marine Accident Dashboard</h1>
 
-      <select onChange={(e) => setSelectedRegion(e.target.value)} value={selectedRegion}>
-        <option value="Incheon">Incheon</option>
-        <option value="Busan">Busan</option>
-        <option value="Jeju">Jeju</option>
-      </select>
+      {/* 연도 선택 드롭다운 */}
+      <div style={{ marginBottom: '20px' }}>
+        <label htmlFor="year-select" style={{ marginRight: '10px' }}>
+          Select Year:
+        </label>
+        <select
+          id="year-select"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+          style={{ padding: '5px', fontSize: '16px' }}
+        >
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+        </select>
+      </div>
 
-      <table border="1" style={{ marginTop: '20px' }}>
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Incidents</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map((item, index) => (
-            <tr key={index}>
-              <td>{item.year}</td>
-              <td>{item.incidents}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* 차트 (Plotly.js) */}
-      <Plot
-        data={[
-          {
-            x: filteredData.map((item) => item.year),
-            y: filteredData.map((item) => item.incidents),
-            type: 'bar',
-            marker: { color: '#434343' }
-          }
-        ]}
-        layout={{ title: `Accidents in ${selectedRegion}` }}
-      />
+      {/* iframe으로 선택된 연도의 지도 HTML 파일 출력 */}
+      <iframe
+        src={fileMap[selectedYear]}
+        style={{ width: '100%', height: '850px', border: 'none' }}
+        title={`Marine Accident Visualization ${selectedYear}`}
+      ></iframe>
     </MainCard>
   );
 }

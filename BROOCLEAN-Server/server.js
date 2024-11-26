@@ -21,6 +21,7 @@ const upload = multer({ storage });
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/heatMap', express.static(path.join(__dirname, 'heatMap')));
 
 // MySQL 연결 설정
 const db = mysql.createPool({
@@ -130,10 +131,8 @@ app.put('/api/update/:caseNo', async (req, res) => {
 app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
   const { subject, description, mobile, email, createdDate, location } = req.body;
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-  console.log('Uploaded file:', req.file); // 디버그용
+
   try {
-    // 프론트엔드로부터 받은 데이터 출력
-    console.log('Uploaded file:', req.file); // 디버그용
     let locationPoint = null;
 
     // location 파싱 (JSON 형태에서 추출)
@@ -157,7 +156,7 @@ app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
       email
     ];
 
-    console.log('쿼리 데이터:', values); // 전달되는 데이터 확인
+    // console.log('쿼리 데이터:', values); // 전달되는 데이터 확인
 
     await db.promise().query(query, values);
     res.status(201).json({ message: '신고 접수 성공' });
@@ -167,6 +166,7 @@ app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
   }
 });
 
+// 신고하기 화면에서 위도, 경도 정보를 이용하여 주소 정보 변환
 app.get('/api/reverse-geocode', async (req, res) => {
   const { x, y } = req.query;
 
@@ -190,6 +190,61 @@ app.get('/api/reverse-geocode', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Reverse Geocoding 요청 실패' });
+  }
+});
+
+// monthly death, missing, injuredCount 취합
+app.get('/api/accidents/casualties', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        MONTH(accidentDateTime) AS month,
+        SUM(deathCount) AS deathCount,
+        SUM(missingCount) AS missingCount,
+        SUM(deathMissingCount) AS deathMissingCount,
+        SUM(injuredCount) AS injuredCount,
+        accidentYear
+      FROM accidents
+      WHERE accidentYear IN (2022, 2023)
+      GROUP BY accidentYear, MONTH(accidentDateTime)
+      ORDER BY accidentYear, MONTH(accidentDateTime);
+    `;
+    const [results] = await db.promise().query(query);
+    res.json(results);
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).send('서버 에러');
+  }
+});
+
+// monthly accidents count
+app.get('/api/accidents/monthly-count', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        MONTH(accidentDateTime) AS month,
+        accidentYear,
+        COUNT(*) AS count
+      FROM accidents
+      WHERE accidentYear IN (2022, 2023)
+      GROUP BY accidentYear, MONTH(accidentDateTime)
+      ORDER BY accidentYear, MONTH(accidentDateTime);
+    `;
+    const [results] = await db.promise().query(query);
+    res.json(results);
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).send('서버 에러');
+  }
+});
+
+app.get('/api/trash', async (req, res) => {
+  try {
+    const [results] = await db.promise().query('SELECT location, trashCnt, weight, latitude, longtitude  FROM trash');
+    res.json(results);
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).send('서버 에러');
   }
 });
 

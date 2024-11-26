@@ -9,6 +9,7 @@ const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const Dashboard = Loadable(lazy(() => import('pages/dashboard/Dashboard')));
 
 const Tracking = Loadable(lazy(() => import('pages/keyComponents/Tracking')));
+const MarineWaste = Loadable(lazy(() => import('pages/keyComponents/MarineWaste')));
 const Monitoring = Loadable(lazy(() => import('pages/keyComponents/Monitoring')));
 const Accident = Loadable(lazy(() => import('pages/keyComponents/Accident')));
 const TodoList = Loadable(lazy(() => import('pages/keyComponents/TodoList')));
@@ -45,8 +46,16 @@ const MainRoutes = {
       element: <Monitoring />
     },
     {
+      path: 'marineWaste',
+      element: <MarineWaste />
+    },
+    {
       path: 'tracking',
       element: <Tracking />
+    },
+    {
+      path: 'accident',
+      element: <Accident />
     },
     {
       path: 'accident',

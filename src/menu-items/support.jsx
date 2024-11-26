@@ -1,12 +1,13 @@
 // assets
-import { MonitorOutlined, CompassOutlined, HourglassOutlined, DashboardOutlined } from '@ant-design/icons';
+import { MonitorOutlined, CompassOutlined, HourglassOutlined, DashboardOutlined, EnvironmentOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
   MonitorOutlined,
   CompassOutlined,
   HourglassOutlined,
-  DashboardOutlined
+  DashboardOutlined,
+  EnvironmentOutlined
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE & DOCUMENTATION ||============================== //
@@ -22,6 +23,13 @@ const support = {
       type: 'item',
       url: '/monitoring',
       icon: icons.MonitorOutlined
+    },
+    {
+      id: 'marineWaste',
+      title: '해양오염분포',
+      type: 'item',
+      url: '/marineWaste',
+      icon: icons.EnvironmentOutlined
     },
     {
       id: 'tracking',
