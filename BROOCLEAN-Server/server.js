@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
 const multer = require('multer');
+require('dotenv').config({ path: './.env' });
 
 // 파일 업로드 경로 설정
 const storage = multer.diskStorage({
@@ -168,16 +169,14 @@ app.post('/api/mobileCreate', upload.single('image'), async (req, res) => {
 
 app.get('/api/reverse-geocode', async (req, res) => {
   const { x, y } = req.query;
-  console.log(' 여기가 실행 되었음!');
-  console.log('x, y ==> ' + x, y);
 
   if (!x || !y) {
     return res.status(400).json({ error: 'x와 y 좌표가 필요합니다.' });
   }
 
   const url = `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${y},${x}&sourcecrs=epsg:4326&orders=admcode,roadaddr&output=json`;
-  const clientId = 'brjvrajhzz';
-  const clientSecret = 'pJIztOnNipj8oqbLNdbWZJYbLUN5Kf3u9beBCAW0';
+  const clientId = process.env.NAVER_MAPS_CLIENT_ID;
+  const clientSecret = process.env.NAVER_MAPS_CLIENT_SECRET;
   try {
     const response = await fetch(url, {
       headers: {
@@ -187,7 +186,6 @@ app.get('/api/reverse-geocode', async (req, res) => {
     });
 
     const data = await response.json();
-    console.log('서버쪽 Response Data ==> ' + JSON.stringify(data));
     res.json(data);
   } catch (error) {
     console.error(error);
