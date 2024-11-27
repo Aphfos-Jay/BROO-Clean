@@ -12,8 +12,6 @@ export default function Accident() {
 
   return (
     <MainCard>
-      <h1>Marine Accident Dashboard</h1>
-
       {/* 연도 선택 드롭다운 */}
       <div style={{ marginBottom: '20px' }}>
         <label htmlFor="year-select" style={{ marginRight: '10px' }}>

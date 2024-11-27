@@ -1,12 +1,8 @@
 // material-ui
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
-import Button from '@mui/material/Button';
+
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -16,22 +12,12 @@ import Box from '@mui/material/Box';
 import MainCard from 'components/MainCard';
 import ReportSummary from './ReportSummary';
 import MonthlyAccidentsReportCard from './MonthlyAccidentsReportCard';
-// project import
-
-import MonthlyBarChart from './MonthlyBarChart';
 import CasualtiesChart from './CasualtiesChart';
+
+// project import
+import MonthlyBarChart from './MonthlyBarChart';
 import UniqueVisitorCard from './UniqueVisitorCard';
-
 import OrdersTable from './OrdersTable';
-
-// assets
-import GiftOutlined from '@ant-design/icons/GiftOutlined';
-import MessageOutlined from '@ant-design/icons/MessageOutlined';
-import SettingOutlined from '@ant-design/icons/SettingOutlined';
-import Jay from 'assets/images/users/Jay.jpg';
-import Gi from 'assets/images/users/Gi.jpg';
-import Gyu from 'assets/images/users/Gyu.jpg';
-import Yong from 'assets/images/users/Yong.jpg';
 
 // avatar style
 const avatarSX = {

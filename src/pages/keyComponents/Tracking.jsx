@@ -9,7 +9,7 @@ import MainCard from 'components/MainCard';
 export default function Tracking() {
   return (
     <MainCard title="BROOCLEAN 2">
-      <Typography variant="body2">연안쓰레기 추적탐지</Typography>
+      <Typography variant="body2">쓰레기 탐지 CCTV</Typography>
     </MainCard>
   );
 }

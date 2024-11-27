@@ -5,7 +5,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { getReportDetail } from '../api/api';
 
 const screenWidth = Dimensions.get('window').width;
-const BASE_URL = 'http://192.168.45.250:5000';
+// const BASE_URL = 'http://192.168.45.250:5000';
+const BASE_URL = 'http://192.168.93.202:5000'; // 스마트폰 핫스팟
 
 export default function ReportDetailScreen() {
   const { caseNo } = useLocalSearchParams();

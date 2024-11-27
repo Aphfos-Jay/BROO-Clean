@@ -33,7 +33,7 @@ const support = {
     },
     {
       id: 'tracking',
-      title: '연안쓰레기 추적탐지',
+      title: '쓰레기 탐지 CCTV',
       type: 'item',
       url: '/tracking',
       icon: icons.CompassOutlined

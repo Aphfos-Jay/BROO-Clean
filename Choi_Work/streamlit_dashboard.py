@@ -10,7 +10,6 @@ import requests
 API_URL = "http://localhost:5000/api/trash"
 
 # Streamlit 설정
-st.title("해안 쓰레기 데이터 시각화")
 st.sidebar.header("필터 옵션")
 
 # API 호출 및 데이터 로드
