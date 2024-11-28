@@ -24,8 +24,8 @@ const ServiceRequestDetail = () => {
   const [status, setStatus] = useState(0);
   const [comment, setComment] = useState('');
 
-  // const BASE_URL = 'http://192.168.75.187:5000/api';
-  const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
+  const BASE_URL = 'http://192.168.75.187:5000/api'; // 집 와이파이
+  // const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
 
   useEffect(() => {
     axios

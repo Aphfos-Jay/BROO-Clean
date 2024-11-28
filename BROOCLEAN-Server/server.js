@@ -240,12 +240,42 @@ app.get('/api/accidents/monthly-count', async (req, res) => {
 
 app.get('/api/trash', async (req, res) => {
   try {
-    const [results] = await db.promise().query('SELECT location, trashCnt, weight, latitude, longtitude  FROM trash');
+    const [results] = await db.promise().query('SELECT location, trashCnt, weight, latitude, longtitude  FROM trash ORDER BY location asc');
     res.json(results);
   } catch (error) {
     console.error('서버 오류:', error);
     res.status(500).send('서버 에러');
   }
+});
+
+app.get('/api/accidents', (req, res) => {
+  const year = req.query.year; // 클라이언트에서 year를 전달받음
+  const query = `
+    SELECT accidentType, seaArea, COUNT(*) as count 
+    FROM accidents 
+    WHERE accidentYear = ? 
+    GROUP BY accidentType, seaArea
+  `;
+
+  db.query(query, [year], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+app.get('/api/accidentsShip', (req, res) => {
+  const year = req.query.year; // 클라이언트에서 year를 전달받음
+  const query = `
+    SELECT shipUseStatistics, COUNT(*) as count 
+    FROM accidents 
+    WHERE accidentYear = ? 
+    GROUP BY shipUseStatistics
+  `;
+
+  db.query(query, [year], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
 });
 
 // 서버 시작

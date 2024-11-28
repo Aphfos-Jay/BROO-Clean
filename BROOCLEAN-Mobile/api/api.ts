@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
-// const BASE_URL = 'http://192.168.45.250:5000/api';
+// const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
+const BASE_URL = 'http://192.168.45.250:5000/api';
 
 // 신고 목록 조회
 export const getReports = async () => {
