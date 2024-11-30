@@ -36,8 +36,8 @@ export default function Monitoring() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        latitude: lat,
-        longtitude: lng,
+        latitude: Number(lat),
+        longtitude: Number(lng),
         min: minutes
       }),
       cache: 'no-cache'

@@ -1,29 +1,26 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from ultralytics import YOLO
+import cv2
+import numpy as np
 
 app = Flask(__name__)
-CORS(app)
 
 # YOLOv8 모델 로드
-@app.route('/oceanMonitoring', methods=['POST'])
-def monitoring_anal():
-    # 클라이언트에서 보낸 데이터를 받음
-    latitude = request.json.get('latitude')
-    longtitude = request.json.get('longtitude')
+model = YOLO('yolov8n.pt')
 
-    # 데이터 처리 (예제: 위치 데이터를 기반으로 HTML 생성)
-    processed_html = f"""
-    <div>
-        <p>Latitude: {latitude}</p>
-        <p>longtitude: {longtitude}</p>
-    </di
-    """
+@app.route('/predict', methods=['POST'])
+def predict():
+    # 비디오 또는 이미지 데이터를 받아서 처리
+    file = request.files['file']
+    img_array = np.frombuffer(file.read(), np.uint8)
+    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+    
+    # YOLOv8으로 객체 탐지 수행
+    results = model(img)  # 모델 추론
+    detections = results.pandas().xywh  # 결과에서 객체 정보 추출
 
-    # 처리 결과를 반환
-    return jsonify({'html': processed_html})
+    # 탐지된 객체 정보를 JSON으로 반환
+    return jsonify(detections.to_dict(orient='records'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='localhost', port=8052)
-
-
-
+    app.run(debug=True, host='0.0.0.0', port=5000)

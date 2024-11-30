@@ -10,7 +10,7 @@ import branca.colormap as cm
 
 # Flask 앱 초기화
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/oceanMonitoring": {"origins": "*"}, r"/trashForecast": {"origins": "*"}})
 
 # 데이터 로드
 FORECAST_API_URL = "http://localhost:5000/api/forecasts";

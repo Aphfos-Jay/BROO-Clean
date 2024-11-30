@@ -18,7 +18,10 @@ export default function Home() {
     setExpanded(false);
   };
 
-  const pdfList = [{ id: 1, title: '개발계획서', file: 'Development_Plan.pdf' }];
+  const pdfList = [
+    { id: 1, title: '개발계획서', file: 'Development_Plan.pdf' },
+    { id: 2, title: '최종발표', file: 'Completation_Report.pdf' }
+  ];
 
   return (
     <Box>
