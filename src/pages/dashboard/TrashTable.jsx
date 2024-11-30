@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import Link from '@mui/material/Link';
@@ -45,7 +45,7 @@ export default function TrashTable() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRows, setFilteredRows] = useState([]);
-
+  const nav = useNavigate();
   // 검색 및 필터링 로직 함수로 분리
   const filterData = () => {
     let filteredData = [...data];
@@ -94,6 +94,10 @@ export default function TrashTable() {
     setPage(0);
   };
 
+  const handleMonitoringClick = (latitude, longitude) => {
+    nav('/monitoring', { state: { lat: latitude, lng: longitude } });
+  };
+
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, filteredRows.length - page * rowsPerPage);
 
   return (
@@ -126,7 +130,7 @@ export default function TrashTable() {
                 <TableCell align="center">
                   <Button
                     onClick={() => {
-                      console.log('row.location --> ' + row.location);
+                      handleMonitoringClick(row.latitude, row.longtitude);
                     }}
                   >
                     모니터링

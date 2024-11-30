@@ -57,7 +57,7 @@ heat_data = [
 ]
 
 # 지도 초기화
-m = folium.Map(location=[36.0, 128.0], zoom_start=8)
+m = folium.Map(location=[35.034163, 127.958316], zoom_start=10)
 marker_cluster = MarkerCluster().add_to(m)
 
 # MarkerCluster 및 Marker 추가

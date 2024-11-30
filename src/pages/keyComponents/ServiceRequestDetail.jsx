@@ -24,8 +24,8 @@ const ServiceRequestDetail = () => {
   const [status, setStatus] = useState(0);
   const [comment, setComment] = useState('');
 
-  const BASE_URL = 'http://192.168.75.187:5000/api'; // 집 와이파이
-  // const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
+  // const BASE_URL = 'http://192.168.75.187:5000/api'; // 집 와이파이
+  const BASE_URL = 'http://192.168.93.202:5000/api'; // 스마트폰 핫스팟
 
   useEffect(() => {
     axios
@@ -104,6 +104,11 @@ const ServiceRequestDetail = () => {
                 </Box>
                 <Box>
                   <Typography variant="body1">
+                    <strong>설명:</strong> {description}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body1">
                     <strong>좌표:</strong> {`(${location?.x}, ${location?.y})`}
                   </Typography>
                   <Typography variant="h6" color="secondary" gutterBottom>
@@ -111,11 +116,7 @@ const ServiceRequestDetail = () => {
                   </Typography>
                   <ServiceRequestMap location={{ x: location?.x, y: location?.y }} />
                 </Box>
-                <Box>
-                  <Typography variant="body1">
-                    <strong>설명:</strong> {description}
-                  </Typography>
-                </Box>
+
                 <Box>
                   <strong>첨부 이미지</strong>
                   <Typography variant="body1">

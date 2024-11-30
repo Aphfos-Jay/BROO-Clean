@@ -18,11 +18,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/heatMap', express.static(path.join(__dirname, 'heatMap')));
 
+app.use(cors()); // 허용할 헤더}));
 // MySQL 연결 설정
 const db = mysql.createPool({
   host: process.env.DB_HOST,
@@ -273,6 +273,35 @@ app.get('/api/accidentsShip', (req, res) => {
   `;
 
   db.query(query, [year], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+app.get('/api/forecasts', (req, res) => {
+  const minutes = req.query.minutes;
+
+  const query = `
+    SELECT predicted_dir, predicted_speed, latitude, longtitude 
+    FROM forecast 
+    WHERE minutes = ? 
+  `;
+
+  db.query(query, [minutes], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+app.get('/api/trashForecasts', (req, res) => {
+  const minutes = req.query.minutes;
+  const query = `
+    SELECT latitude, longtitude 
+    FROM trashtracking 
+    WHERE minutes = ? 
+  `;
+
+  db.query(query, [minutes], (err, results) => {
     if (err) throw err;
     res.json(results);
   });

@@ -5,8 +5,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { getReportDetail } from '../api/api';
 
 const screenWidth = Dimensions.get('window').width;
-const BASE_URL = 'http://192.168.45.250:5000'; // 집 와이파이
-// const BASE_URL = 'http://192.168.93.202:5000'; // 스마트폰 핫스팟
+// const BASE_URL = 'http://192.168.45.250:5000'; // 집 와이파이
+const BASE_URL = 'http://192.168.93.202:5000'; // 스마트폰 핫스팟
 
 export default function ReportDetailScreen() {
   const { caseNo } = useLocalSearchParams();
@@ -77,7 +77,17 @@ export default function ReportDetailScreen() {
       )}
       <View style={styles.detailBox}>
         <Text style={styles.label}>상태</Text>
-        <Text style={styles.value}>{report.status || '상태 없음'}</Text>
+        <Text style={styles.value}>
+          {report.status == 0
+            ? '접수됨'
+            : report.status == 1
+              ? '진행중'
+              : report.status == 2
+                ? '완료됨'
+                : report.status == 3
+                  ? '보류됨'
+                  : '상태없음'}
+        </Text>
       </View>
       <View style={styles.detailBox}>
         <Text style={styles.label}>위치</Text>
