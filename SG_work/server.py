@@ -6,7 +6,7 @@ import numpy as np
 app = Flask(__name__)
 
 # YOLOv8 모델 로드
-model = YOLO('yolov8n.pt')
+model = YOLO('best21.pt')
 
 @app.route('/predict', methods=['POST'])
 def predict():

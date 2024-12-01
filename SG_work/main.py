@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # YOLO 모델 초기화
-model = YOLO('yolov8n.pt')
+model = YOLO('best21.pt')
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -50,7 +50,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                     # YOLO 설정 개선
                     results = model(frame, 
-                        conf=0.55,  # 신뢰도 임계값 낮춤
+                        conf=0.25,  # 신뢰도 임계값 낮춤
                         iou=0.45,  # IOU 임계값 조정                       
                     )
                     
@@ -85,4 +85,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8053)

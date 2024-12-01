@@ -63,7 +63,7 @@ const MapView = () => {
   const startDetection = (url) => {
     if (socketRef.current) socketRef.current.close(); // 기존 연결 닫기
 
-    socketRef.current = new WebSocket('ws://localhost:8000/ws');
+    socketRef.current = new WebSocket('ws://localhost:8053/ws');
     socketRef.current.onopen = () => {
       console.log('WebSocket 연결 성공!');
       socketRef.current.send(JSON.stringify({ url })); // 선택된 CCTV URL 전송
@@ -125,15 +125,19 @@ const MapView = () => {
 
       {/* 선택된 CCTV 정보 */}
       {selectedCCTV && (
-        <div className="cctv-video" style={{ position: 'relative', display: 'inline-block' }}>
-          <h2>선택된 CCTV</h2>
-          <p>
-            <strong>설명:</strong> {selectedCCTV.cctvname}
-          </p>
-          <p>
-            <strong>주소:</strong> {selectedCCTV.cctvaddress}
-          </p>
-          <CCTVVideo url={selectedCCTV.cctvurl} />
+  <div className="cctv-video" style={{ position: 'relative', display: 'inline-block' }}>
+    <h2>선택된 CCTV</h2>
+    <p>
+      <strong>설명:</strong> {selectedCCTV.cctvname}
+    </p>
+    <p>
+      <strong>위도:</strong> {coordinates.lat}, <strong>경도:</strong> {coordinates.lng}
+      {/* 'trash' 클래스 카운트 표시 */}
+      <span style={{ marginLeft: '10px', fontWeight: 'bold', color: 'green' }}>
+        Trash Count: {detections.filter(detection => detection.class === 'trash').length}
+      </span>
+    </p>
+    <CCTVVideo url={selectedCCTV.cctvurl} />
 
           {/* 객체 탐지 결과 오버레이 */}
           {detections.map((det, index) => (
@@ -142,29 +146,19 @@ const MapView = () => {
               style={{
                 position: 'absolute',
                 border: '2px solid red',
-                left: det.x1,
-                top: det.y1,
+                left: det.x1 + 29,
+                top: det.y1 + 100, 
                 width: det.x2 - det.x1,
                 height: det.y2 - det.y1,
                 color: 'red',
                 pointerEvents: 'none',
               }}
             >
-              {det.class}
+            {`${det.class} (${Math.round(det.confidence * 100)}%)`}
             </div>
           ))}
         </div>
       )}
-
-      {/* 선택된 좌표 정보 */}
-      <div style={styles.coordinatesBox}>
-        <p>
-          <strong>위도:</strong> {coordinates.lat}
-        </p>
-        <p>
-          <strong>경도:</strong> {coordinates.lng}
-        </p>
-      </div>
     </div>
   );
 };
