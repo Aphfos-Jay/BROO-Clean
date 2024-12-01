@@ -27,7 +27,7 @@ function CCTVVideo({ url }) {
   }, [url]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/ws');
+    const ws = new WebSocket('ws://localhost:8053/ws');
 
     ws.onopen = () => {
       console.log('WebSocket connected');
