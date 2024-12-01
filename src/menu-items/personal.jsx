@@ -16,6 +16,13 @@ const personal = {
   type: 'group',
   children: [
     {
+      id: 'servicerequest',
+      title: '쓰레기 신고 목록',
+      type: 'item',
+      url: '/sr',
+      icon: icons.EyeOutlined
+    },
+    {
       id: 'task',
       title: '작업',
       type: 'item',
@@ -28,13 +35,6 @@ const personal = {
       type: 'item',
       url: '/event',
       icon: icons.CalendarOutlined
-    },
-    {
-      id: 'servicerequest',
-      title: '쓰레기 신고 목록',
-      type: 'item',
-      url: '/sr',
-      icon: icons.EyeOutlined
     }
   ]
 };
