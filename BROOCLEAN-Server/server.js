@@ -296,9 +296,9 @@ app.get('/api/forecasts', (req, res) => {
 app.get('/api/trashForecasts', (req, res) => {
   const minutes = req.query.minutes;
   const query = `
-    SELECT latitude, longtitude 
+    SELECT latitude, longtitude,  minutes
     FROM trashtracking 
-    WHERE minutes = ? 
+    ORDER BY no
   `;
 
   db.query(query, [minutes], (err, results) => {

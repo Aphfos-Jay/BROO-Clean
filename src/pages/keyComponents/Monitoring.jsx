@@ -5,14 +5,6 @@ import MainCard from 'components/MainCard';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-
-const statusOptions = [
-  { value: 0, label: '현재' },
-  { value: 10, label: '현재 기준 10분뒤' },
-  { value: 20, label: '현재 기준 20분뒤' },
-  { value: 30, label: '현재 기준 30분뒤' }
-];
 
 export default function Monitoring() {
   const location = useLocation();
@@ -20,7 +12,6 @@ export default function Monitoring() {
   const [longtitude, setlongtitude] = useState(location.state?.lng);
   const [htmlContent, setHtmlContent] = useState('');
   const [selectBox, setSelectBox] = useState(false);
-  const [minutes, setMinutes] = useState(0);
 
   useEffect(() => {
     // 위치 정보 가져오기
@@ -37,8 +28,7 @@ export default function Monitoring() {
       },
       body: JSON.stringify({
         latitude: Number(lat),
-        longtitude: Number(lng),
-        min: minutes
+        longtitude: Number(lng)
       }),
       cache: 'no-cache'
     })
@@ -65,24 +55,6 @@ export default function Monitoring() {
         <Button variant="outlined" onClick={() => fetchHtml(latitude, longtitude)}>
           분석하기
         </Button>
-        {selectBox && (
-          <TextField
-            label="상태"
-            select
-            value={minutes}
-            onChange={(e) => {
-              setMinutes(e.target.value);
-              fetchHtml(latitude, longtitude);
-            }}
-            sx={{ width: 200 }}
-          >
-            {statusOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
       </Box>
 
       <Box>

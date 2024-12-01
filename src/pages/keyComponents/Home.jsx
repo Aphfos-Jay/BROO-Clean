@@ -20,7 +20,12 @@ export default function Home() {
 
   const pdfList = [
     { id: 1, title: '개발계획서', file: 'Development_Plan.pdf' },
-    { id: 2, title: '최종발표', file: 'Completation_Report.pdf' }
+    { id: 2, title: '최종발표', file: 'Completation_Report.pdf' },
+    { id: 3, title: '로고', file: 'Logo.pdf' },
+    { id: 4, title: 'WBS', file: 'WBS.pdf' },
+    { id: 5, title: '시스템 작업묘사', file: 'System_Describe.pdf' },
+    { id: 6, title: '테이블 정의서', file: 'Table_Definition.pdf' },
+    { id: 7, title: 'Yolo 학습', file: 'about_Yolo.pdf' }
   ];
 
   return (

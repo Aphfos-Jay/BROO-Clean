@@ -76,24 +76,6 @@ export default function Home() {
 
         {currentTab === 1 && (
           <Box>
-            {selectBox && (
-              <TextField
-                label="상태"
-                select
-                value={minutes}
-                onChange={(e) => {
-                  setMinutes(e.target.value);
-                  fetchHtml();
-                }}
-                sx={{ width: 200 }}
-              >
-                {statusOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
             <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
           </Box>
         )}
