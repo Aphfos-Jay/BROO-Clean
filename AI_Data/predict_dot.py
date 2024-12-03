@@ -143,9 +143,9 @@ def create_map_forecast(lat, lon, data):
         ).add_to(m)
 
 
-        folium.Marker(location=new10, popup="20 Minutes", icon=folium.Icon(color='green')).add_to(m)
-        folium.Marker(location=new20, popup="20 Minutes", icon=folium.Icon(color='orange')).add_to(m)
-        folium.Marker(location=new30, popup="30 Minutes", icon=folium.Icon(color='red')).add_to(m)
+        folium.Marker(location=new10, popup="After 10 Minutes", icon=folium.Icon(color='green')).add_to(m)
+        folium.Marker(location=new20, popup="After 20 Minutes", icon=folium.Icon(color='orange')).add_to(m)
+        folium.Marker(location=new30, popup="After 30 Minutes", icon=folium.Icon(color='red')).add_to(m)
 
     # 평균 predicted_speed 계산 
     recordLength = len(data['0'])  # 각 key에 동일한 레코드 수가 있다고 가정

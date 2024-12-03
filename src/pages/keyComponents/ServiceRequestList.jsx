@@ -68,12 +68,13 @@ export default function ServiceRequest() {
 
     // 검색어 필터
     if (searchTerm.trim() !== '') {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase(); // searchTerm 소문자 변환
       filteredData = filteredData.filter(
         (row) =>
-          row.caseNumber.toString().includes(searchTerm) ||
-          row.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          row.mobile.includes(searchTerm) ||
-          row.Email.toLowerCase().includes(searchTerm.toLowerCase())
+          (row.caseNumber?.toString() || '').includes(searchTerm) ||
+          (row.subject?.toString().toLowerCase() || '').includes(lowerCaseSearchTerm) ||
+          (row.mobile || '').includes(searchTerm) ||
+          (row.email?.toString().toLowerCase() || '').includes(lowerCaseSearchTerm)
       );
     }
 

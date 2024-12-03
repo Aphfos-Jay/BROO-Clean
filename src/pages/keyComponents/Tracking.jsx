@@ -33,6 +33,26 @@ function LocationMarker({ setCoordinates, fetchCCTVData }) {
   return null;
 }
 
+const adjustSize = (detections, videoWidth, videoHeight, originalWidth, originalHeight) => {
+  const widthRatio = videoWidth / originalWidth;
+  const heightRatio = videoHeight / originalHeight;
+
+  return detections.map((det) => {
+    const adjustedX1 = Math.max(0, Math.min(det.x1 * widthRatio, videoWidth));
+    const adjustedY1 = Math.max(0, Math.min(det.y1 * heightRatio, videoHeight));
+    const adjustedX2 = Math.max(0, Math.min(det.x2 * widthRatio, videoWidth));
+    const adjustedY2 = Math.max(0, Math.min(det.y2 * heightRatio, videoHeight));
+
+    return {
+      ...det,
+      x1: adjustedX1,
+      y1: adjustedY1,
+      x2: adjustedX2,
+      y2: adjustedY2
+    };
+  });
+};
+
 export default function Tracking() {
   const location = useLocation();
   const initialLocation = location.state?.location || { lat: 38.132069, lng: 128.569722 };
@@ -57,23 +77,46 @@ export default function Tracking() {
         }
       });
       setCctvData(response.data.response?.data || []);
-    } catch {
-      console.error('CCTV 데이터를 가져오는데 실패했습니다.');
+    } catch (error) {
+      console.error('CCTV 데이터를 가져오는데 실패했습니다.', error);
     }
   };
 
   const startDetection = (url) => {
-    if (socketRef.current) socketRef.current.close();
-    socketRef.current = new WebSocket('ws://localhost:8000/ws');
-    socketRef.current.onopen = () => socketRef.current.send(JSON.stringify({ url }));
+    if (socketRef.current) {
+      socketRef.current.close();
+    }
+
+    socketRef.current = new WebSocket('ws://localhost:8053/ws');
+    socketRef.current.onopen = () => {
+      socketRef.current.send(JSON.stringify({ url }));
+    };
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.detections) setDetections(data.detections);
+      if (data.detections) {
+        const videoElement = videoRef.current;
+        if (videoElement) {
+          const videoWidth = videoElement.offsetWidth;
+          const videoHeight = videoElement.offsetHeight;
+          const adjustedDetections = adjustSize(
+            data.detections,
+            videoWidth,
+            videoHeight,
+            640, // 원본 프레임 가로 크기
+            480 // 원본 프레임 세로 크기
+          );
+          setDetections(adjustedDetections);
+        }
+      }
     };
   };
 
   useEffect(() => {
-    return () => socketRef.current?.close();
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
   }, []);
 
   return (
@@ -83,12 +126,13 @@ export default function Tracking() {
 
         {/* 지도 영역 */}
         <div style={styles.mapContainer}>
-          <MapContainer center={[initialLocation.lat, initialLocation.lng]} zoom={13} style={styles.map}>
+          <MapContainer center={[initialLocation.lat, initialLocation.lng]} zoom={13} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             />
             <LocationMarker setCoordinates={setCoordinates} fetchCCTVData={fetchCCTVData} />
+            {/* CCTV 마커 표시 */}
             {cctvData.map((cctv, index) => (
               <Marker
                 key={index}
@@ -106,17 +150,20 @@ export default function Tracking() {
 
         {/* 선택된 CCTV 정보 */}
         {selectedCCTV && (
-          <div style={styles.infoBox}>
-            <h2 style={styles.infoHeading}>선택된 CCTV</h2>
+          <div style={styles.cctvContainer}>
+            <h2>선택된 CCTV</h2>
             <p>
               <strong>설명:</strong> {selectedCCTV.cctvname}
             </p>
             <p>
-              <strong>주소:</strong> {selectedCCTV.cctvaddress}
+              <strong>위치:</strong> {selectedCCTV.coordy}, {selectedCCTV.coordx}
             </p>
-            <CCTVVideo url={selectedCCTV.cctvurl} detections={detections} />
+            <p>
+              <strong>Trash Count:</strong> {detections.filter((det) => det.class === 'trash').length}
+            </p>
+            <CCTVVideo url={selectedCCTV.cctvurl} />
 
-            {/* 탐지 결과 */}
+            {/* 객체 탐지 결과 표시 */}
             <div style={styles.detectionOverlay}>
               {detections.map((det, index) => (
                 <div
@@ -128,11 +175,11 @@ export default function Tracking() {
                     top: det.y1,
                     width: det.x2 - det.x1,
                     height: det.y2 - det.y1,
-                    pointerEvents: 'none',
-                    backgroundColor: 'rgba(255, 0, 0, 0.3)'
+                    color: 'red',
+                    pointerEvents: 'none'
                   }}
                 >
-                  {det.class}
+                  {`${det.class} (${Math.round(det.confidence * 100)}%)`}
                 </div>
               ))}
             </div>
@@ -163,32 +210,16 @@ const styles = {
     overflow: 'hidden',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
   },
-  map: {
-    height: '100%',
-    width: '100%'
-  },
-  infoBox: {
-    padding: '15px',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
+  cctvContainer: {
+    position: 'relative',
+    padding: '20px',
     backgroundColor: '#fff',
-    marginBottom: '20px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-  },
-  infoHeading: {
-    fontSize: '20px',
-    marginBottom: '10px',
-    color: '#333'
+    borderRadius: '10px',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    marginBottom: '20px'
   },
   detectionOverlay: {
     position: 'relative',
-    marginTop: '10px'
-  },
-  coordinatesBox: {
-    padding: '10px 20px',
-    textAlign: 'center',
-    backgroundColor: '#f8f8f8',
-    borderRadius: '10px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+    marginTop: '20px'
   }
 };
